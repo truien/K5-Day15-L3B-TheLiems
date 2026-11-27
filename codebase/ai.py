@@ -53,13 +53,17 @@ URL_OLLAMA = "http://localhost:11434/api/chat"
 URL_GEMINI_TMPL = "https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent"
 
 
-def post_json(url: str, headers: dict, body: dict, timeout: int = 60) -> dict:
+def post_json(url: str, headers: dict, body: dict, timeout: int = 90) -> dict:
     """Gửi POST JSON, trả về JSON phản hồi. Chỉ dùng thư viện chuẩn (urllib)."""
+    base_headers = {
+        "Content-Type": "application/json",
+        "User-Agent": "ai20k-hackathon/1.0",
+    }
     req = urllib.request.Request(
         url,
         data=json.dumps(body).encode("utf-8"),
         method="POST",
-        headers=dict({"Content-Type": "application/json"}, **headers),
+        headers=dict(base_headers, **headers),
     )
     try:
         with urllib.request.urlopen(req, timeout=timeout) as r:
@@ -78,23 +82,35 @@ def _require_config(need_key: bool = True):
         raise RuntimeError("Thiếu API_KEY trong .env (MODEL_PROVIDER=%s)" % MODEL_PROVIDER)
 
 
+def _openai_url() -> str:
+    if not API_BASE_URL:
+        return URL_OPENAI
+    base = API_BASE_URL.rstrip("/")
+    if base.endswith("/chat/completions"):
+        return base
+    return base + "/chat/completions"
+
+
 def call_openai(system: str, user: str) -> dict:
     _require_config(need_key=True)
-    url = API_BASE_URL or URL_OPENAI
+    url = _openai_url()
     messages = ([{"role": "system", "content": system}] if system else []) + [
         {"role": "user", "content": user}
     ]
-    body = {"model": MODEL_NAME, "messages": messages}
+    body = {"model": MODEL_NAME, "messages": messages, "stream": False}
     if not re.match(r"^(o[134]|gpt-5)", MODEL_NAME, re.IGNORECASE):
         body["temperature"] = 0
     data = post_json(url, {"Authorization": "Bearer " + API_KEY}, body)
-    u = data["usage"]
+    u = data.get("usage") or {}
+    comp = int(u.get("completion_tokens", 0))
+    reasoning = int((u.get("completion_tokens_details") or {}).get("reasoning_tokens", 0))
+    tokens_out = (comp + reasoning) if (reasoning > 0 and comp < reasoning) else comp
     choices = data.get("choices") or []
     content = ((choices[0].get("message") or {}).get("content") or "") if choices else ""
     return {
         "text": content,
-        "tokens_in": int(u["prompt_tokens"]),
-        "tokens_out": int(u["completion_tokens"]),
+        "tokens_in": int(u.get("prompt_tokens", 0)),
+        "tokens_out": tokens_out,
     }
 
 
