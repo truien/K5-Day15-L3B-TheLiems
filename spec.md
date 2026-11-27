@@ -42,13 +42,15 @@ Data BTC cấp đã dùng (nếu có — không commit nguyên file): __
 ## §4. Thiết kế *(guide 2.2, 3.2)*
 - **Lát cắt MỘT CÂU** (1 người dùng · 1 việc · 1 quyết định AI · 1 kết quả): một học viên · đưa đề lab và cho biết checkpoint sắp làm · AI chọn các yêu cầu trong đề áp dụng cho checkpoint đó, kể cả yêu cầu nằm ở phần khác, kèm đoạn đề · học viên đối chiếu đủ yêu cầu trước khi chạy
 - Không làm (≥3 điều): không viết code hay làm hộ bài · không chấm điểm, không khẳng định bài đã đạt · không chạy lệnh, không truy cập máy hay repo của học viên · không thêm yêu cầu ngoài nội dung đề
-- **Sơ đồ** (ảnh / Mermaid / draw.io): [chèn ở đây]
-- **Hình dạng:** [ ] workflow cố định · [ ] một agent · [ ] nhiều agent — 2 dòng lý do, và vì sao **không** chọn hình dạng phức tạp hơn:
+- **Sơ đồ** (ảnh / Mermaid / draw.io): 
+![day15lab.png](images/day15lab.png)
+- **Hình dạng:** [x] workflow cố định · [ ] một agent · [ ] nhiều agent — 2 dòng lý do, và vì sao **không** chọn hình dạng phức tạp hơn: 
+Toàn bộ quá trình từ đọc tài liệu đề bài, checkpoints, chọn và lọc mã và trả kết quả đều được xác định trước và diễn ra theo trình tự cố định.
 - **AI dựa vào đâu** — mỗi công cụ (khớp `codebase/tools.py`):
 
   | Công cụ | Input | Output | Tác động ra ngoài? |
-  |---|---|---|---|
-  |  |  |  |  |
+  |---------|-------|--------|--------------------|
+  |         |       |        |                    |
 
 - **Mức tự động:** [ ] AI gợi ý, người quyết · [ ] AI tự làm khi chắc, chuyển người khi không · [ ] AI tự làm — lý do (sai thì ai chịu gì, sửa đắt hay rẻ):
 - **Chỗ chặn rủi ro** (rủi ro lớn nhất của lát cắt bị chặn ở đâu, bằng gì):
