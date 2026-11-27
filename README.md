@@ -8,7 +8,7 @@ Hackathon AI20K khoá 5 · Track A (EdTech) · Lớp L3B. **Thành viên:** [TEA
 
 **Không làm:** viết code hay làm hộ bài · chấm điểm hoặc khẳng định bài đã đạt · chạy lệnh, truy cập máy hay repo của học viên · thêm yêu cầu ngoài nội dung đề.
 
-**Hiện trạng (27/11):** đã chọn hướng; bằng chứng pain **chưa đạt ngưỡng** ([evidence/summary.md](evidence/summary.md)); bản chạy thử **còn là khung ví dụ, chưa gọi model thật**.
+**Hiện trạng (CP2, 27/11):** đã chọn hướng; bằng chứng pain **chưa đạt ngưỡng** ([evidence/summary.md](evidence/summary.md)); bản chạy thử đi hết luồng nhưng **model còn giả, chưa gọi AI thật**.
 
 ---
 
@@ -86,8 +86,9 @@ Nhóm dùng stack khác (Node, Streamlit, notebook…): sửa hàm `run_app()` t
 | Thành phần | Thật / Giả | Ghi chú |
 |---|---|---|
 | Lời gọi AI ở quyết định trung tâm | **Giả** (chế độ giả của khung; bắt buộc thật từ CP3) | Model: ____ |
-| Công cụ lấy đoạn đề lab | **Giả** | Còn là hàm ví dụ của khung trong `codebase/tools.py` |
-| Đề lab dùng chạy thử | Chưa có | Sẽ do nhóm tự viết, không chép đề lab của khoá |
+| Công cụ đọc đề lab (`read_lab`, `list_labs`) | **Thật** | Đọc file trong `data/labs/`, không tác động ra ngoài |
+| Chọn mã yêu cầu khi model giả | **Giả** | Luật viết sẵn trong code (`_fake_model_decision`, `codebase/agent.py`), không phải AI |
+| Đề lab dùng chạy thử | `synthetic` | LAB1–LAB3 nhóm tự viết, không chép đề lab của khoá ([data/DATA_CARD.md](data/DATA_CARD.md)) |
 
 ## Dùng AI vào việc gì
 
