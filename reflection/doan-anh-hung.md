@@ -1,0 +1,12 @@
+# Reflection — Đoàn Anh Hùng
+
+> Bản nháp CP3 (27/11/2026) — sẽ cập nhật mục 3 sau khi có kết quả chạy lượt 1 (`eval/run-1.csv`) và lượt 2 (`eval/run-2.csv`) trước hạn 23:59 Thứ Bảy 28/11.
+
+1. **Vai trò + phần mình làm (trỏ tới file / commit):**
+   Mình là thành viên phụ trách **Prompt, bộ câu thử và metric** của nhóm TheLiems. Ở CP2 (commit `7245585`, PR #4), mình viết thêm 2 đề lab mẫu `synthetic` ([data/labs/LAB2.md](../data/labs/LAB2.md), [data/labs/LAB3.md](../data/labs/LAB3.md)), điền bản đầu [data/DATA_CARD.md](../data/DATA_CARD.md), tạo 12 câu thử đầu tiên tại [eval/benchmark.csv](../eval/benchmark.csv), chốt 4 metric kiểm chứng được tại [eval/metric_spec.yaml](../eval/metric_spec.yaml) và mục 1–4 của [eval/README.md](../eval/README.md). Ở CP3 (nhánh `cp3-hung`), mình mở rộng bộ câu thử lên 25 câu (`B13`–`B25`, giữ bất biến `B01`–`B12`, nguồn `nguoi_dung` 10/25), cập nhật `DATA_CARD.md`, `eval/README.md`, hoàn thiện [spec.md](../spec.md) §5–§6 và rà soát `SYSTEM` prompt cùng lỗi kết nối API của `codebase/ai.py` và `codebase/agent.py`.
+
+2. **AI hỗ trợ mình thế nào (việc gì, công cụ gì, chỗ nào phải sửa lại output AI):**
+   Mình dùng Antigravity (Gemini) để rà cấu trúc repo, soạn nháp đề mẫu `LAB2`/`LAB3`, `DATA_CARD.md`, 25 câu thử, 4 metric và kiểm tra lỗi kết nối `.env` (`MODEL_PROVIDER`, `API_BASE_URL`, mã chặn Cloudflare `1010`). Ở bản nháp đầu của `LAB2`/`LAB3`, đề AI viết quá gọn và thiếu độ nhiễu thực tế của lab L3, nên mình yêu cầu đối chiếu lại kiểu bố cục rải nhiều phần (`RULES`/`CHECKPOINTS`/`RUBRIC`/`SUBMISSION`) để bổ sung bẫy 0 điểm, cấm sửa script chấm và thứ tự dọn container (vẫn viết mới 100% `synthetic`, không chép đề khoá). Mình cũng tự đối chiếu từng mã `[LABx-y.z]`, kiểm `git diff` để không sửa nhầm `B01`–`B12` và kiểm xung đột với nhánh của đồng đội trước khi mở PR.
+
+3. **Một câu thử trượt của nhóm và mình học được gì từ nó:**
+   *(Đang chờ cập nhật câu trượt thực tế từ lượt 1 `eval/run-1.csv` trên model thật trước hạn 23:59 Thứ Bảy 28/11.)* Trong đợt chấm thử 5 output trên chế độ model giả (ghi tại [eval/README.md](../eval/README.md) mục 3, khớp 5/5 giữa hai người chấm), hai câu trượt là `B08` (bỏ sót mã `LAB2-4.4` về phần mở rộng không tính điểm và không trả lời rõ thiếu mặc định `SHUTDOWN_TIMEOUT`) và `B10` (trả checklist thay vì nhãn `TỪ CHỐI:`). Kết quả này cho thấy luật tách từ khoá cố định không xử lý nổi yêu cầu chéo theo ngữ cảnh và yêu cầu lách phạm vi — cần model thật kết hợp prompt quy định rõ quy tắc loại trừ và chặn từ chối dứt khoát.
