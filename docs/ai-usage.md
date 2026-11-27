@@ -6,7 +6,7 @@ README của nhóm có mục "Dùng AI vào việc gì" (2–3 dòng, bắt bu�
 
 | Việc | Công cụ AI | AI làm gì | Người kiểm/sửa gì | Ai phụ trách |
 |---|---|---|---|---|
-| Code bản chạy thử | | | | |
+| Code bản chạy thử | Antigravity (Gemini) | Hỗ trợ viết khung `codebase/tools.py` (`read_lab`, `list_labs`), `codebase/agent.py` (workflow cố định 5 bước, `parse_input` linh hoạt, `_filter_valid_codes`, `_sanitize_free_text`) và `codebase/ai.py` (kết nối OpenAI/9router, Claude, Gemini, Ollama bằng `urllib`) | Tự kiểm tra từng hàm, rà lỗ hổng path traversal / lộ key / đếm `reasoning_tokens`, chạy kiểm thử `run.py`, `eval --try`, `simulate --try` và chạy lượt 1 (`eval/run-1.csv`, 24/25 đạt) | Nguyễn Thanh Tùng |
 | Prompt / thiết kế lời gọi mô hình | Antigravity (Gemini) | Đối chiếu `SYSTEM` prompt trong `codebase/agent.py` với 25 câu thử & 4 metric; kiểm tra cấu hình `.env` và mã lỗi kết nối | Kiểm trực tiếp mã nguồn `codebase/ai.py` & `codebase/agent.py`, chạy thử `python run.py eval --try` và ghi 3 đề xuất chỉnh prompt gửi Tùng | Đoàn Anh Hùng (phối hợp Tùng) |
 | Đào data (viết script đếm, gợi ý nhãn) | | | Kiểm tay __ dòng, khớp __ | |
 | Rà câu hỏi phỏng vấn / khảo sát | | Chỉ rà câu dẫn dắt | | |

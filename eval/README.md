@@ -60,7 +60,7 @@ Lệnh `python run.py eval` xuất `eval/run-N.csv` + `traces/run-N.jsonl` · nh
 
 | Lượt | Run ID | Model | Cấu hình (prompt / công cụ / thay đổi) | Đạt / tổng | % | Đạt chuẩn? |
 | --- | --- | --- | --- | --- | --- | --- |
-| 1 | *(chưa chạy)* | | | | | |
+| 1 | `run-1@20261128-015107` | `ag/gemini-3.8-flash` (qua `API_BASE_URL` OpenAI-compatible) | Workflow cố định 5 bước (`read_lab`, `list_labs`), `SYSTEM` 2 bước + `_filter_valid_codes` + `_sanitize_free_text`, `temperature=0`, `stream=False` | 24/25 | 96% | Đạt (≥80%, `thuong` 7/8, `kho` 10/10, `tu_choi` 7/7, 0 bịa mã; trượt `B04` thiếu `LAB3-0.4`) |
 | 2 | *(chưa chạy)* | | | | | |
 
 Lượt chạy lại vì lỗi kỹ thuật, lượt sau CP4: ghi thêm dòng, không sửa dòng cũ.

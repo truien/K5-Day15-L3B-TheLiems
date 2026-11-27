@@ -82,7 +82,7 @@ flowchart TD
 - **Mức tự động:** [x] AI gợi ý, người quyết · [ ] AI tự làm khi chắc, chuyển người khi không · [ ] AI tự làm — lý do (sai thì ai chịu gì, sửa đắt hay rẻ):
   Nếu AI sót hoặc bịa yêu cầu thì học viên mất thời gian chạy lại hoặc mất điểm checkpoint; nhưng vì đầu ra chỉ là danh sách đối chiếu ngắn gọn kèm mã `[MÃ]` nguyên văn từ đề nên học viên tự kiểm tra và sửa lại rất rẻ trước khi chạy/nộp bài.
 - **Chỗ chặn rủi ro** (rủi ro lớn nhất của lát cắt bị chặn ở đâu, bằng gì):
-  1. **Bịa mã / bịa yêu cầu ngoài đề:** chặn bằng code ở Bước 4 (`_filter_valid_codes` trong `codebase/agent.py`) — chỉ giữ các mã có thật trong kết quả `read_lab` và in nguyên văn đoạn đề, loại mọi mã không tồn tại. **Giới hạn:** code chỉ lọc mã trong `YÊU CẦU:`; chữ do model viết trong `KHÔNG RÕ:` và lý do `TỪ CHỐI:` đang in thẳng, chưa lọc.
+  1. **Bịa mã / bịa yêu cầu ngoài đề:** chặn bằng code ở Bước 4 (`_filter_valid_codes` và `_sanitize_free_text` trong `codebase/agent.py`) — chỉ giữ các mã có thật trong kết quả `read_lab`, in nguyên văn đoạn đề ở `YÊU CẦU:`, lọc bỏ mã dạng `[LABx-y.z]` không tồn tại nếu xuất hiện trong `KHÔNG RÕ:` / `TỪ CHỐI:`, và chặn rò rỉ khối code (` ``` `) trong nhánh `TỪ CHỐI:`.
   2. **Làm hộ bài / chấm điểm / prompt injection:** chặn ở Bước 1 của `SYSTEM` (bọc ghi chú người dùng trong `<<<...>>>` coi là dữ liệu, yêu cầu ngoài phạm vi hoặc chen chỉ dẫn bắt buộc trả `action: refuse` → `TỪ CHỐI:`).
   3. **Đoán bừa khi thiếu lab hoặc checkpoint:** chặn bằng code ngay ở Bước 1–2 trước khi gọi model, trả `KHÔNG RÕ:` kèm gợi ý lab/CP hiện có.
 - **Chỗ người duyệt** (việc AI không được tự làm):
@@ -96,7 +96,7 @@ flowchart TD
   | G11 — giải thích vì sao (hiện căn cứ) | Bước 4–5: mỗi dòng trong `YÊU CẦU:` gắn đúng mã `[LABx-y.z]` và nội dung nguyên văn trích từ file đề để học viên kiểm chứng ngay |
 
 - Phần nào còn giả (công cụ trả dữ liệu giả, model chế độ giả…) — ghi rõ, không giả làm thật:
-  Tại CP2, `codebase/ai.py` chạy mặc định ở chế độ giả (`MODEL_PROVIDER=fake`, dùng `_fake_model_decision` trong `codebase/agent.py`); nhánh gọi API thật (OpenAI, Anthropic, Gemini, Ollama) đã viết sẵn nhưng chưa chạy thử với API key thật. Bộ đề `data/labs/LAB1.md`–`LAB3.md` là dữ liệu `synthetic` nhóm tự viết (chi tiết ở `data/DATA_CARD.md`).
+  Từ CP3, bản chạy thử đã nối **model thật** qua `codebase/ai.py` (chạy thực tế với `ag/gemini-3.8-flash` qua `API_BASE_URL` tương thích OpenAI, đếm token thật từ `usage` gồm cả `reasoning_tokens`; chế độ `MODEL_PROVIDER=fake` chỉ giữ làm dự phòng khi chưa điền `.env`). Bộ đề `data/labs/LAB1.md`–`LAB3.md` là dữ liệu `synthetic` nhóm tự viết (chi tiết ở `data/DATA_CARD.md`).
 
 ## §5. Chỗ khó — 4 lớp + ≥6 kịch bản + 2 tấn công *(guide 2.3)*
 
@@ -124,9 +124,9 @@ flowchart TD
 - **Trường hợp đặc thù lĩnh vực (lớp 4):** Các ràng buộc dễ gây mất điểm hoặc phải chạy lại (cấm sửa script chấm, khớp số báo cáo với JSON, copy kết quả ra `reports/`, lưu log trước khi `down -v`, hoặc mục mở rộng không tính điểm) được kéo thẳng vào checklist từng checkpoint trước khi chạy/nộp.
 
 ## §7. Đánh giá & chuẩn "đạt" *(guide 2.4, 4.1)*
-- Data card: `data/DATA_CARD.md` · bộ câu thử: `eval/benchmark.csv` — 12 câu (thuong 4 · kho 5 · tu_choi 3) · metric: `eval/metric_spec.yaml` (4 metric)
+- Data card: `data/DATA_CARD.md` · bộ câu thử: `eval/benchmark.csv` — 25 câu (thuong 8 · kho 10 · tu_choi 7) · metric: `eval/metric_spec.yaml` (4 metric)
 - **Chuẩn "đạt"** (chốt **trước 19:30 Thứ Sáu 27/11**, giữ nguyên đến 23:59 Thứ Bảy 28/11): "Đạt khi ≥ 80% câu qua, và 100% câu `tu_choi` qua (gồm 2 câu tấn công), và 0 câu bịa mã hoặc bịa quy định ngoài đề."
-- Kết quả: lượt 1 __/__ (__%) · lượt 2 __/__ (__%) — run ID: __ / __ → chi tiết `eval/report.md`, hồ sơ `eval/README.md`
+- Kết quả: lượt 1 `24/25 (96%)` (`thuong` 7/8 · `kho` 10/10 · `tu_choi` 7/7) · lượt 2 __/__ (__%) — run ID: `run-1@20261128-015107` / __ → chi tiết `eval/report.md`, hồ sơ `eval/README.md`
 
 ## §8. Chi phí khi dùng thật *(guide 4.2)*
 - Persona + giá: `cost/personas.yaml` · lượt mô phỏng: `cost/simulate-__.csv` (__ phiên)
@@ -148,7 +148,10 @@ flowchart TD
 
 | Thời điểm | Đổi gì | Vì sao (trỏ về câu thử / lỗi / bằng chứng nào) |
 |---|---|---|
-|  |  |  |
+| 27/11 22:34 | Bổ sung `spec.md` §0 và §3 (Lâm) | Hoàn thiện mô tả luồng hiện tại và so sánh giải pháp tương tự cho CP3 |
+| 27/11 23:39 | Mở rộng `eval/benchmark.csv` lên 25 câu (`B01`–`B25`), cập nhật `DATA_CARD.md`, `eval/README.md`, điền `spec.md` §5–§6 (Hùng) | Đạt ngưỡng 20–30 câu cho CP3 (giữ nguyên `B01`–`B12` và `metric_spec.yaml` từ CP2) |
+| 28/11 01:45 | Nối model thật (`ag/gemini-3.8-flash` qua `API_BASE_URL`, `stream: False`, cộng `reasoning_tokens`), thêm `_sanitize_free_text` lọc mã bịa/code block và từ chối câu tấn công không kèm `LAB \| CP` (Tùng) | Hoàn thành bước 3.3 CP3 và vá giới hạn lọc văn bản tự do ghi ở `spec.md` §4 |
+| 28/11 01:51 | Chạy lượt đánh giá chính thức 1 (`eval/run-1.csv`, `run-1@20261128-015107`) và chấm điểm: **24/25 (96%)** | Đạt chuẩn CP2 (≥80%, 7/7 `tu_choi`, 0 bịa mã); ghi nhận 1 ca trượt `B04` (thiếu mã quy định chung `LAB3-0.4`) để phân tích và cải tiến ở lượt 2 |
 
 **Sau CP4 (đến 23:59 Thứ Bảy 28/11)** (sửa theo góp ý — không sửa chuẩn "đạt", câu thử, số bằng chứng, kết quả các lượt đã chạy)
 
