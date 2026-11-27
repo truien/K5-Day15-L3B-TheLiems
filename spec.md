@@ -21,10 +21,12 @@ Data BTC cấp đã dùng (nếu có — không commit nguyên file): __
 
 | Hướng | Bao nhiêu người gặp | Bao nhiêu lần / tháng | Mỗi lần tốn gì | Impact / tháng | Làm kịp không | Chọn? |
 |---|---|---|---|---|---|---|
-|  |  |  |  |  |  |  |
-|  |  |  |  |  |  |  |
-|  |  |  |  |  |  |  |
+| H1. Máy chưa sẵn môi trường khi vào lab | chưa có số | chưa có số | chưa có số | chưa tính được | Có *(tự ước tính)* | Chờ bằng chứng |
+| H2. Không biết trước cần nắm kiến thức gì cho lab | chưa có số | chưa có số | chưa có số | chưa tính được | Có *(tự ước tính)* | Chờ bằng chứng |
+| H3. Kẹt lỗi trong lúc làm lab | chưa có số | chưa có số | chưa có số | chưa tính được | Có *(tự ước tính)* | Chờ bằng chứng |
+| H4. Nộp thiếu hoặc sai file bài lab | chưa có số | chưa có số | chưa có số | chưa tính được | Có *(tự ước tính)* | Chờ bằng chứng |
 
+- Chưa chốt hướng. Sau phỏng vấn, chọn hướng có pain và impact mạnh nhất; hai hướng sát nhau thì chọn hướng bằng chứng mạnh hơn.
 - **Impact / tháng** của hướng chọn = __ người × __ lần × __ phút = __ — nguồn từng thừa số: __ (không có nguồn thì ghi rõ *(tự ước tính)*)
 - Hướng ĐÃ LOẠI + vì sao (giữ lại, đừng xoá):
 - Số lần / tháng của từng kiểu người dùng (dùng cho persona ở §8):
