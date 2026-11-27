@@ -11,10 +11,10 @@
 
 | STT | Họ và tên | Mã học viên | Vai trò | Phần việc chính |
 |---|---|---|---|---|
-| 1 | Nguyễn Trọng Truyền | 2A202603868 | Đội trưởng | ____ |
-| 2 | Nguyễn Thanh Tùng | 2A202603807 | Thành viên | ____ |
-| 3 | Đoàn Anh Hùng | 2A202603880 | Thành viên | ____ |
-| 4 | Lê Đức Trúc Lâm | 2A202603787 | Thành viên | ____ |
+| 1 | Nguyễn Trọng Truyền | 2A202603868 | Đội trưởng | Điều phối, hỏi người dùng, impact, nộp bài |
+| 2 | Nguyễn Thanh Tùng | 2A202603807 | Thành viên | Luồng chạy thử, backend, nối model |
+| 3 | Đoàn Anh Hùng | 2A202603880 | Thành viên | Prompt, bộ câu thử, metric |
+| 4 | Lê Đức Trúc Lâm | 2A202603787 | Thành viên | Giao diện demo, hạ tầng agent, mô phỏng chi phí |
 
 **Quy tắc điền**
 - **Lớp:** `L3A` hoặc `L3B`. **Track:** một chữ `A` (EdTech), `B` (Y tế), `C` (Du lịch), `D` (Thương mại điện tử), `E` (Tài chính) hoặc `F` (Làn khác). **Link repo:** link GitHub công khai của nhóm.
