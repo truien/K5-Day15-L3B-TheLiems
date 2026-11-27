@@ -1,35 +1,14 @@
-> Đây là khung repo nộp bài. Điền mọi chỗ `____`, giữ nguyên tên các mục. **Mục 0 xoá đi sau khi tạo repo xong.**
-> Giờ, mốc, luật, rubric: xem `README.md`, `02-guide.md`, `03-rubric.md` trong repo đề (bộ đề BTC phát).
+# TheLiems — Soát yêu cầu đề lab theo từng bước
 
-# TheLiems — Chuẩn bị trước buổi lab
+Hackathon AI20K khoá 5 · Track A (EdTech) · Lớp L3B. **Thành viên:** [TEAMS.md](TEAMS.md) · **Canvas:** [canvas.md](canvas.md) · **Spec:** [spec.md](spec.md) · **Đề, luật, rubric:** [de-bai/](de-bai/)
 
-**Thành viên, lớp, track:** xem [TEAMS.md](TEAMS.md). **Điền TEAMS.md đúng format**: khi chấm và đánh giá, BTC quét file này để ghép điểm cho từng người.
+**Bài toán:** học viên L3 đang làm lab theo từng checkpoint thì sót hoặc không chắc yêu cầu của bước đang làm, nên phải đối chiếu lại hoặc chạy lại và mất thêm thời gian.
 
-*Lát cắt = phần nhỏ nhất làm xong được trong hackathon: một người dùng · một việc · một quyết định AI · một kết quả.*
+**Lát cắt:** một học viên · đưa đề lab và cho biết checkpoint sắp làm · AI chọn các yêu cầu trong đề áp dụng cho checkpoint đó, kể cả yêu cầu nằm ở phần khác, kèm đoạn đề · học viên đối chiếu đủ yêu cầu trước khi chạy.
 
----
+**Không làm:** viết code hay làm hộ bài · chấm điểm hoặc khẳng định bài đã đạt · chạy lệnh, truy cập máy hay repo của học viên · thêm yêu cầu ngoài nội dung đề.
 
-## 0. Tạo repo nhóm từ khung này *(guide bước 1.0 — xoá mục này khi xong)*
-
-**Hai luật:** repo **mới, công khai (Public)** · tên `K5-Day15-<lớp>-<tên nhóm>`, vd `K5-Day15-L3A-StudyPulse` (tên nhóm viết liền, không dấu). Chép **nội dung bên trong** `starter-repo/` — `README.md`, `run.py` phải nằm ngay ở trang đầu repo.
-
-**(a) Không cần terminal — làm trên web GitHub**
-1. **New repository** → tên theo mẫu → **Public** → không tick thêm gì → tạo.
-2. Trên máy mở thư mục `starter-repo/`, **bật hiện file ẩn** (Mac Finder: `Cmd + Shift + .` · Windows: View → Show → Hidden items) để thấy `.gitignore`, `.env.example`.
-3. Trên repo vừa tạo: **Add file → Upload files** → **kéo thả** tất cả file và thư mục bên trong `starter-repo/` → **Commit changes**. Kéo thả mới giữ được thư mục con; lỗi vì nhiều file quá thì tải từng thư mục.
-4. Kiểm: có `.gitignore` chưa (hay thiếu nhất). Thiếu thì **Add file → Create new file**, tên `.gitignore`, dán nội dung từ máy.
-5. Từ giờ sửa file ngay trên web (biểu tượng bút chì → Commit). Phần code vẫn cần **một** người chạy được trên máy: trước mỗi lượt chạy tải **Code → Download ZIP** về thư mục mới (mang `.env` sang), chạy xong chỉ upload file kết quả và file vừa sửa; trong lúc đang chạy không ai sửa `eval/benchmark.csv` trên web.
-
-**(b) Dùng git**
-```bash
-git clone https://github.com/<tai-khoan>/K5-Day15-L3A-TenNhom.git
-cd K5-Day15-L3A-TenNhom
-cp -R ../duong-dan-toi/starter-repo/. .      # Windows PowerShell: Copy-Item -Recurse -Force ..\duong-dan-toi\starter-repo\* .
-git status                                   # không được có .env, data-btc/
-git add -A && git commit -m "Khung repo từ starter-repo" && git push
-```
-
-**Xong khi:** mở link repo bằng **cửa sổ ẩn danh** thấy được file (link nộp CP1) · đã mời thành viên (Settings → Collaborators) · đã điền `TEAMS.md` và `python run.py check` không báo gì ở phần "Kiểm TEAMS.md".
+**Hiện trạng (27/11):** đã chọn hướng; bằng chứng pain **chưa đạt ngưỡng** ([evidence/summary.md](evidence/summary.md)); bản chạy thử **còn là khung ví dụ, chưa gọi model thật**.
 
 ---
 
@@ -42,8 +21,6 @@ git add -A && git commit -m "Khung repo từ starter-repo" && git push
 | Bộ câu thử, metric, chuẩn "đạt" (`eval/benchmark.csv`, `eval/metric_spec.yaml`, `spec.md` §7) | Kiểm đủ cột, đủ câu `kho` / `tu_choi`, đủ ≥1/3 câu từ người dùng / data thật (`run.py check`) |
 | Chấm cột `pass` theo metric spec | Chạy cả bộ một lệnh, có run ID, model, token từng câu (`run.py eval`) · tính % đạt (`run.py score`) |
 | Persona, số người dùng thật, giá model (`cost/personas.yaml`) | Sinh ~50 phiên, chạy thật qua bản chạy thử, tính chi phí / phiên, / task thành công, / tháng 3 kịch bản (`run.py simulate`) |
-
-*Ví dụ track A (ví dụ cỡ, không phải lời giải):* nhóm viết công cụ `search_lesson` tra bài pre-class đã đánh mã đoạn, luồng "tra đoạn → model trả lời kèm mã đoạn, không có thì nói không có", metric "mọi khẳng định có mã đoạn đúng", persona "ôn dồn trước kiểm tra". Khung chạy 25 câu thử ra `run-1.csv`, nhóm chấm `pass`, `score` in % đạt; `simulate` chạy 50 phiên ra chi phí / task thành công cho hai model.
 
 ## Chạy trong 3 phút
 
@@ -108,14 +85,16 @@ Nhóm dùng stack khác (Node, Streamlit, notebook…): sửa hàm `run_app()` t
 
 | Thành phần | Thật / Giả | Ghi chú |
 |---|---|---|
-| Lời gọi AI ở quyết định trung tâm | **Thật** (bắt buộc từ CP3) | Model: ____ |
-|  |  |  |
+| Lời gọi AI ở quyết định trung tâm | **Giả** (chế độ giả của khung; bắt buộc thật từ CP3) | Model: ____ |
+| Công cụ lấy đoạn đề lab | **Giả** | Còn là hàm ví dụ của khung trong `codebase/tools.py` |
+| Đề lab dùng chạy thử | Chưa có | Sẽ do nhóm tự viết, không chép đề lab của khoá |
 
 ## Dùng AI vào việc gì
 
-2–3 dòng (bắt buộc): nhóm dùng công cụ AI nào để làm gì, người kiểm lại phần nào. Chi tiết: [docs/ai-usage.md](docs/ai-usage.md). Coding agent đọc [AGENTS.md](AGENTS.md).
+- Claude Code: sắp xếp lại repo, soạn nháp canvas, spec, giả thuyết, tổng hợp bằng chứng, câu hỏi phỏng vấn; đếm thử data pre-class.
+- Người kiểm lại: ____
 
-____
+Chi tiết: [docs/ai-usage.md](docs/ai-usage.md). Coding agent đọc [AGENTS.md](AGENTS.md).
 
 ## File mẫu — điền ở bước nào
 
