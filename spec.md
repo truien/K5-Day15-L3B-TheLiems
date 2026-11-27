@@ -1,4 +1,4 @@
-# AI SPEC — Soát yêu cầu đề lab theo từng bước · Nhóm TheLiems · Phòng [XXX] · Zone [X]
+# AI SPEC — Soát yêu cầu đề lab theo từng bước · Nhóm TheLiems · Phòng C401 · Zone [X]
 
 > Mốc nộp: §7 chốt chuẩn "đạt" tại **CP2 19:30 Thứ Sáu 27/11** · §0–§7 nộp **CP3 10:00 Thứ Bảy 28/11** · đủ §0–§10 **CP4 14:30 Thứ Bảy 28/11** · §10 changelog ghi tiếp đến **23:59 Thứ Bảy 28/11**.
 > Đầu mỗi mục ghi bước guide (`02-guide.md` trong repo đề) chỉ cách điền. Mỗi mục ngắn, có số và nguồn; chi tiết để ở file được trỏ tới. Xoá dòng hướng dẫn trong ngoặc vuông khi điền xong.
@@ -42,26 +42,53 @@ Data BTC cấp đã dùng (nếu có — không commit nguyên file): __
 ## §4. Thiết kế *(guide 2.2, 3.2)*
 - **Lát cắt MỘT CÂU** (1 người dùng · 1 việc · 1 quyết định AI · 1 kết quả): một học viên · đưa đề lab và cho biết checkpoint sắp làm · AI chọn các yêu cầu trong đề áp dụng cho checkpoint đó, kể cả yêu cầu nằm ở phần khác, kèm đoạn đề · học viên đối chiếu đủ yêu cầu trước khi chạy
 - Không làm (≥3 điều): không viết code hay làm hộ bài · không chấm điểm, không khẳng định bài đã đạt · không chạy lệnh, không truy cập máy hay repo của học viên · không thêm yêu cầu ngoài nội dung đề
-- **Sơ đồ** (ảnh / Mermaid / draw.io): [chèn ở đây]
-- **Hình dạng:** [ ] workflow cố định · [ ] một agent · [ ] nhiều agent — 2 dòng lý do, và vì sao **không** chọn hình dạng phức tạp hơn:
+- **Sơ đồ** (Mermaid — khớp `codebase/agent.py` và `codebase/tools.py`):
+
+```mermaid
+flowchart TD
+    A["Học viên nhập: LAB | CP | ghi chú (tuỳ chọn)"] --> B["Bước 1 (Code): Tách mã lab, checkpoint và ghi chú"]
+    B --> C{"Đủ mã lab và checkpoint?"}
+    C -- "Thiếu mã + đòi ngoài phạm vi" --> R1["TỪ CHỐI: ngoài phạm vi + nêu việc công cụ làm được"]
+    C -- "Thiếu mã (G10)" --> U1["KHÔNG RÕ: thiếu mã lab hoặc checkpoint"]
+    C -- "Đủ mã" --> D["Bước 2 (Công cụ read_lab): Đọc đề trong data/labs/{LAB}.md"]
+    D --> E{"Có đề lab và checkpoint trong đề không?"}
+    E -- "Không (G10)" --> U2["Gọi list_labs() nếu thiếu đề → KHÔNG RÕ: không tìm thấy lab/CP"]
+    E -- "Có" --> F["Bước 3 (AI - call_model): Kiểm tra phạm vi/chỉ dẫn chen; chọn mã [MÃ] áp dụng cho CP (mục 0, mục CP, mục 4) và ghi mục KHÔNG RÕ nếu đề không quy định"]
+    F --> G{"Ngoài phạm vi hoặc chen chỉ dẫn?"}
+    G -- "Có (Chặn rủi ro #1)" --> R2["TỪ CHỐI: không viết code/chấm điểm/làm theo chỉ dẫn chen + nêu phạm vi công cụ"]
+    G -- "Không" --> H["Bước 4 (Code - Chặn rủi ro #2): Đối chiếu mã thật từ read_lab, loại mọi mã không có trong đề và giữ nguyên văn nội dung đề"]
+    H --> I["Bước 5 (Code): In kết quả theo giao ước (YÊU CẦU: kèm [MÃ] + KHÔNG RÕ: điều đề không nói hoặc 'không có')"]
+    I --> J(["Chỗ người duyệt — Học viên tự đối chiếu từng yêu cầu trước khi chạy/nộp bài"])
+```
+
+- **Hình dạng:** [x] workflow cố định · [ ] một agent · [ ] nhiều agent — 2 dòng lý do, và vì sao **không** chọn hình dạng phức tạp hơn:
+  Toàn bộ quá trình từ tách đầu vào, đọc đề, kiểm tra tồn tại lab/CP, để AI lọc mã yêu cầu, đến bước code loại mã không có trong đề và in kết quả đều cố định thứ tự cho mọi lần chạy.
+  Không chọn một agent hay nhiều agent vì bài toán chỉ cần một quyết định AI duy nhất trên toàn bộ văn bản đề; workflow cố định tránh gọi model thừa khi thiếu lab/CP, chặn cứng lỗi bịa mã bằng code, rẻ hơn và dễ đo hơn.
 - **AI dựa vào đâu** — mỗi công cụ (khớp `codebase/tools.py`):
 
   | Công cụ | Input | Output | Tác động ra ngoài? |
   |---|---|---|---|
-  |  |  |  |  |
+  | `read_lab` | `lab_id` (`str`, vd `LAB1`) | `dict` gồm `found`, `lab_id`, `title`, `checkpoints`, `items` (`code`, `section`, `section_type`, `checkpoint`, `text`), `raw` | Không (chỉ đọc file trong `data/labs/`) |
+  | `list_labs` | Không | `list[str]` danh sách mã đề lab hiện có trong `data/labs/` | Không (chỉ liệt kê thư mục `data/labs/`) |
 
-- **Mức tự động:** [ ] AI gợi ý, người quyết · [ ] AI tự làm khi chắc, chuyển người khi không · [ ] AI tự làm — lý do (sai thì ai chịu gì, sửa đắt hay rẻ):
+- **Mức tự động:** [x] AI gợi ý, người quyết · [ ] AI tự làm khi chắc, chuyển người khi không · [ ] AI tự làm — lý do (sai thì ai chịu gì, sửa đắt hay rẻ):
+  Nếu AI sót hoặc bịa yêu cầu thì học viên mất thời gian chạy lại hoặc mất điểm checkpoint; nhưng vì đầu ra chỉ là danh sách đối chiếu ngắn gọn kèm mã `[MÃ]` nguyên văn từ đề nên học viên tự kiểm tra và sửa lại rất rẻ trước khi chạy/nộp bài.
 - **Chỗ chặn rủi ro** (rủi ro lớn nhất của lát cắt bị chặn ở đâu, bằng gì):
+  1. **Bịa mã / bịa yêu cầu ngoài đề:** chặn bằng code ở Bước 4 (`_filter_valid_codes` trong `codebase/agent.py`) — chỉ giữ các mã có thật trong kết quả `read_lab` và in nguyên văn đoạn đề, loại mọi mã không tồn tại. **Giới hạn:** code chỉ lọc mã trong `YÊU CẦU:`; chữ do model viết trong `KHÔNG RÕ:` và lý do `TỪ CHỐI:` đang in thẳng, chưa lọc.
+  2. **Làm hộ bài / chấm điểm / prompt injection:** chặn ở Bước 1 của `SYSTEM` (bọc ghi chú người dùng trong `<<<...>>>` coi là dữ liệu, yêu cầu ngoài phạm vi hoặc chen chỉ dẫn bắt buộc trả `action: refuse` → `TỪ CHỐI:`).
+  3. **Đoán bừa khi thiếu lab hoặc checkpoint:** chặn bằng code ngay ở Bước 1–2 trước khi gọi model, trả `KHÔNG RÕ:` kèm gợi ý lab/CP hiện có.
 - **Chỗ người duyệt** (việc AI không được tự làm):
+  Học viên tự đọc và xác nhận từng mục trong danh sách đối chiếu trước khi chạy lệnh hoặc nộp bài; AI không tự sửa code, không tự chạy lệnh, không tự chấm đạt/trượt thay học viên hay giảng viên.
 - **Nguyên tắc thiết kế** (≥3, bắt buộc G10):
 
   | Nguyên tắc | Chỗ cụ thể trên sơ đồ / trong bản chạy thử |
   |---|---|
-  | G10 — thu hẹp phạm vi khi không chắc |  |
-  |  |  |
-  |  |  |
+  | G10 — thu hẹp phạm vi khi không chắc | Bước 1–2: thiếu hoặc không tìm thấy lab/CP thì dừng trước khi gọi AI và báo `KHÔNG RÕ:`; Bước 3–5: chi tiết học viên hỏi nhưng đề không quy định được tách vào mục `KHÔNG RÕ:`, không tự đoán |
+  | G1 / G2 — nói rõ làm được gì, làm tốt đến đâu | Nhánh `TỪ CHỐI:` luôn kèm `_TOOL_SCOPE_MSG` nói rõ công cụ chỉ liệt kê yêu cầu theo đề để tự đối chiếu, không viết code hay chấm điểm |
+  | G11 — giải thích vì sao (hiện căn cứ) | Bước 4–5: mỗi dòng trong `YÊU CẦU:` gắn đúng mã `[LABx-y.z]` và nội dung nguyên văn trích từ file đề để học viên kiểm chứng ngay |
 
 - Phần nào còn giả (công cụ trả dữ liệu giả, model chế độ giả…) — ghi rõ, không giả làm thật:
+  Tại CP2, `codebase/ai.py` chạy mặc định ở chế độ giả (`MODEL_PROVIDER=fake`, dùng `_fake_model_decision` trong `codebase/agent.py`); nhánh gọi API thật (OpenAI, Anthropic, Gemini, Ollama) đã viết sẵn nhưng chưa chạy thử với API key thật. Bộ đề `data/labs/LAB1.md`–`LAB3.md` là dữ liệu `synthetic` nhóm tự viết (chi tiết ở `data/DATA_CARD.md`).
 
 ## §5. Chỗ khó — 4 lớp + ≥6 kịch bản + 2 tấn công *(guide 2.3)*
 
@@ -78,8 +105,8 @@ Data BTC cấp đã dùng (nếu có — không commit nguyên file): __
 - Bị đòi ngoài phạm vi (lớp 3): · Trường hợp đặc thù lĩnh vực (lớp 4):
 
 ## §7. Đánh giá & chuẩn "đạt" *(guide 2.4, 4.1)*
-- Data card: `data/DATA_CARD.md` · bộ câu thử: `eval/benchmark.csv` — __ câu (thuong __ · kho __ · tu_choi __) · metric: `eval/metric_spec.yaml` (__ metric)
-- **Chuẩn "đạt"** (chốt **trước 19:30 Thứ Sáu 27/11**, giữ nguyên đến 23:59 Thứ Bảy 28/11): "Đạt khi ≥ __% câu qua, và __"
+- Data card: `data/DATA_CARD.md` · bộ câu thử: `eval/benchmark.csv` — 12 câu (thuong 4 · kho 5 · tu_choi 3) · metric: `eval/metric_spec.yaml` (4 metric)
+- **Chuẩn "đạt"** (chốt **trước 19:30 Thứ Sáu 27/11**, giữ nguyên đến 23:59 Thứ Bảy 28/11): "Đạt khi ≥ 80% câu qua, và 100% câu `tu_choi` qua (gồm 2 câu tấn công), và 0 câu bịa mã hoặc bịa quy định ngoài đề."
 - Kết quả: lượt 1 __/__ (__%) · lượt 2 __/__ (__%) — run ID: __ / __ → chi tiết `eval/report.md`, hồ sơ `eval/README.md`
 
 ## §8. Chi phí khi dùng thật *(guide 4.2)*

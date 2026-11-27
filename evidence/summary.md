@@ -11,13 +11,13 @@
 |---|---|---|
 | Đào data (x/N, %, cách đếm chạy lại được, ≥5 ví dụ) | ☐ không dùng cho hướng này | — |
 | Phỏng vấn (≥3 người ngoài nhóm, đúng người dùng) | ☐ có 3 phiếu, còn thiếu (xem mục 5) | `evidence/interviews/P2.md`–`P4.md` |
-| Khảo sát (≥20 người ngoài nhóm, đúng người dùng) | ☐ chưa làm | — |
+| Khảo sát (≥20 người ngoài nhóm, đúng người dùng) | ☐ đã soạn câu hỏi và cách đếm, chưa có câu trả lời | `evidence/survey/questions.md` |
 
 ## 2. Số chính
 
 - Đào data: không dùng. Data pre-class không ghi buổi lab trên lớp.
 - Phỏng vấn: **2/3 người** (P2, P4) kể mất từ 30 phút trở lên khi không biết kết quả đã đúng yêu cầu chưa. P3 nói tài liệu chia nhiều file nên tìm mất công, không nêu thời gian cho việc đó; chỗ P3 tốn nhất là lỗi Docker và deploy (1–2 giờ).
-- Khảo sát: chưa làm.
+- Khảo sát: đã soạn, chưa có số.
 
 | | Vai | Gặp pain? | Số lần / 1 tháng qua | Lần gần nhất mất | Đang xoay xở bằng |
 |---|---|---|---|---|---|
