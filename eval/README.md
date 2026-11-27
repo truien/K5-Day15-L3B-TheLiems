@@ -1,6 +1,6 @@
 # Hồ sơ đánh giá — một trang
 
-> Bản đầu CP2 (mục 1–4, chốt trước 19:30 Thứ Sáu 27/11). Mục 5–6 sẽ điền sau khi chạy lượt 1 (CP3) và lượt 2 (CP4).
+> Cập nhật CP3 (mục 1–2 mở rộng bộ câu thử 12 → 25 câu; mục 3 metric và chuẩn "đạt" giữ nguyên bản đã chốt tại CP2 trước 19:30 ngày 27/11). Mục 5–6 sẽ điền sau khi chạy lượt 1 (CP3) và lượt 2 (CP4).
 
 ## 1. Dataset → xử lý
 
@@ -9,18 +9,18 @@
 
 ## 2. Bộ câu thử dựng ra sao
 
-- [eval/benchmark.csv](./benchmark.csv) *(bản CP2, sẽ mở rộng lên 20–30 câu ở CP3)*: **12 câu** (`thuong` 4 · `kho` 5 · `tu_choi` 3, trong đó **2 câu tấn công** `B11`, `B12`).
-- Nguồn (`python run.py check`): `nguoi_dung` 5 · `data_that` 0 · `tu_viet` 7 · `sinh_seed` 0 → từ người dùng / data thật **5/12** (`≥ 1/3`).
-- Độ phủ — lưới input 4 chiều:
-  1. **Đề lab:** `LAB1` (3 câu) · `LAB2` (5 câu) · `LAB3` (4 câu).
-  2. **Mức rõ thông tin:** đủ `LAB | CP` (4 câu) · kèm câu hỏi ngoài đề hoặc phạm vi mở rộng (4 câu) · checkpoint không tồn tại `CP9` (1 câu) · ngoài phạm vi / chen chỉ dẫn (3 câu).
-  3. **Bẫy & rủi ro:** gom chéo mục `0` & mục `4` (`B01`–`B05`) · bẫy 0 điểm & phạm vi không tính điểm (`B05`, `B08`) · câu hỏi chi tiết đề không nói (`B06`, `B07`, `B08`) · tấn công prompt injection (`B11`, `B12`).
-  4. **Hành vi mong đợi:** liệt kê `YÊU CẦU` + `KHÔNG RÕ: không có` (`B01`–`B05`) · liệt kê kèm `KHÔNG RÕ:` có nội dung (`B06`–`B08`) · chỉ báo `KHÔNG RÕ: không tìm thấy` (`B09`) · `TỪ CHỐI:` (`B10`–`B12`).
+- [eval/benchmark.csv](./benchmark.csv) *(bản CP3 — giữ nguyên `B01`–`B12` của CP2, thêm `B13`–`B25`)*: **25 câu** (`thuong` 8 · `kho` 10 · `tu_choi` 7, trong đó **4 câu tấn công / lách luật** `B11`, `B12`, `B24`, `B25`).
+- Nguồn (`python run.py check`): `nguoi_dung` 10 · `data_that` 0 · `tu_viet` 15 · `sinh_seed` 0 → từ người dùng / data thật **10/25** (`40% ≥ 1/3`).
+- Độ phủ — lưới input 4 chiều (phủ đủ **9/9 cặp** `LAB1–LAB3 × CP1–CP3`):
+  1. **Đề lab:** `LAB1` (8 câu) · `LAB2` (9 câu) · `LAB3` (7 câu) · mã lab không tồn tại `LAB9` (1 câu).
+  2. **Mức rõ thông tin:** đủ `LAB | CP` chuẩn giao ước (9 câu) · gõ câu tự nhiên không có dấu `|` (1 câu: `B21`) · kèm câu hỏi ngoài đề hoặc phạm vi mở rộng (5 câu) · thiếu mã CP / sai lab / sai CP (3 câu: `B09`, `B17`, `B18`) · ngoài phạm vi / tấn công (7 câu).
+  3. **Bẫy & rủi ro:** gom chéo mục `0` & mục `4` (`B01`–`B05`, `B13`–`B16`) · bẫy 0 điểm, thứ tự dọn container & phạm vi không tính điểm (`B05`, `B08`, `B15`, `B16`, `B19`) · câu hỏi chi tiết đề không nói (`B06`, `B07`, `B08`, `B19`, `B20`) · tấn công prompt injection, trộn việc hợp lệ và đóng vai (`B11`, `B12`, `B24`, `B25`).
+  4. **Hành vi mong đợi:** liệt kê `YÊU CẦU` + `KHÔNG RÕ: không có` (`B01`–`B05`, `B13`–`B16`, `B21`) · liệt kê kèm `KHÔNG RÕ:` có nội dung (`B06`–`B08`, `B19`, `B20`) · chỉ báo `KHÔNG RÕ: không tìm thấy` (`B09`, `B17`, `B18`) · `TỪ CHỐI:` (`B10`–`B12`, `B22`–`B25`).
 - Câu `kho` & `tu_choi` trỏ về 4 lớp chỗ khó ([spec.md](../spec.md) §5):
-  - **Lớp 1 (Nguồn sự thật — đề không nói):** `B06`, `B07`, `B08`.
-  - **Lớp 2 (Mơ hồ / thiếu thông tin):** `B09`.
-  - **Lớp 3 (Ngoài phạm vi / thẩm quyền & tấn công):** `B10`, `B11`, `B12`.
-  - **Lớp 4 (Đặc thù lĩnh vực — bẫy 0 điểm / phạm vi chấm):** `B05`, `B08`.
+  - **Lớp 1 (Nguồn sự thật — đề không nói):** `B06`, `B07`, `B08`, `B19`, `B20`.
+  - **Lớp 2 (Mơ hồ / thiếu thông tin / định dạng tự nhiên):** `B09`, `B17`, `B18`, `B21`.
+  - **Lớp 3 (Ngoài phạm vi / thẩm quyền & tấn công):** `B10`, `B11`, `B12`, `B22`, `B23`, `B24`, `B25`.
+  - **Lớp 4 (Đặc thù lĩnh vực — bẫy 0 điểm / thứ tự thao tác / phạm vi chấm):** `B05`, `B08`, `B15`, `B16`, `B19`.
 
 ## 3. Metric và cách chấm
 
