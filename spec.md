@@ -8,7 +8,12 @@ Data BTC cấp đã dùng (nếu có — không commit nguyên file): __
 
 ## §0. Hiện tại việc này diễn ra thế nào *(guide 1.1)*
 - Luồng hiện tại của việc này, trong khoá hoặc trên app thật (3–5 bước; ảnh chụp từ tài khoản của mình, đã che thông tin):
-- Công cụ / AI đang được dùng cho việc này (nếu có) + nguồn. Không kiểm được thì ghi "chưa kiểm":
+  1. Học viên mở bài tập, xem các nội dung bài, checkpoints hoàn thành, và yêu cầu bài nộp
+  2. Học viên thiết lập các môi trường (python, docker,...) trước khi làm bài
+  3. Học viên thực hiện bài tập theo đúng nội dung và các checkpoints
+  4. Học sinh kiểm tra bài làm đã đáp ứng tất cả yêu cầu đề bài chưa. Nếu chưa, tiếp tục làm và sửa bài (bước 3)
+  5. Học sinh kiểm tra bài nộp đã phù hợp và đầy đủ theo yêu cầu chưa. Nếu rồi thì nộp bài.
+- Công cụ / AI đang được dùng cho việc này (nếu có) + nguồn. Không kiểm được thì ghi "chưa kiểm": Chưa kiểm
 
 ## §1. Người dùng & bằng chứng *(guide 1.1, 1.2)*
 - Người dùng chính (một vai cụ thể): học viên L3 AI20K khoá 5 đang làm lab nhiều checkpoint
@@ -37,7 +42,10 @@ Data BTC cấp đã dùng (nếu có — không commit nguyên file): __
 - Số lần / tháng của từng kiểu người dùng (dùng cho persona ở §8):
 
 ## §3. Giải pháp tương tự *(guide 2.1)*
-- [sản phẩm / tính năng gần giống]: một điều đáng học · một điều đáng né · mình khác gì
+- [sản phẩm / tính năng gần giống]: Tính năng học tập trên ChatGPT
+  - Một điều đáng học: Trong tính năng này, ChatGPT sẽ hướng dẫn người dùng hiểu các kiến thức thông qua các giải thích và minh hoạ dễ hiểu, cộng với các bài trắc nghiệm nhỏ ở cuối để thử nguời dùng.
+  - Một điều đáng né: ChatGPT có thể chỉ quá sâu cho người học, hoặc thậm chí làm hộ bài, nếu nhập prompt không phù hợp.
+  - Mình khác gì: Agent trong dự án này sẽ có giới hạn nhất định, như việc tránh không chỉ quá sâu hay làm hộ bài, đồng thời sẽ luôn có khuyến cáo yêu cầu người học luôn tự soát lại kiến thức và bài làm.
 
 ## §4. Thiết kế *(guide 2.2, 3.2)*
 - **Lát cắt MỘT CÂU** (1 người dùng · 1 việc · 1 quyết định AI · 1 kết quả): một học viên · đưa đề lab và cho biết checkpoint sắp làm · AI chọn các yêu cầu trong đề áp dụng cho checkpoint đó, kể cả yêu cầu nằm ở phần khác, kèm đoạn đề · học viên đối chiếu đủ yêu cầu trước khi chạy
