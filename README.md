@@ -8,7 +8,7 @@ Hackathon AI20K khoá 5 · Track A (EdTech) · Lớp L3B. **Thành viên:** [TEA
 
 **Không làm:** viết code hay làm hộ bài · chấm điểm hoặc khẳng định bài đã đạt · chạy lệnh, truy cập máy hay repo của học viên · thêm yêu cầu ngoài nội dung đề.
 
-**Hiện trạng (CP3, 28/11):** đã nối **model thật** (`ag/gemini-3.8-flash` qua `API_BASE_URL` OpenAI-compatible), mở rộng đủ **25 câu thử** (`eval/benchmark.csv`), hoàn tất **lượt 1** (`eval/run-1.csv`, `run-1@20261128-015107`: **24/25 = 96%** đạt chuẩn CP2); bằng chứng pain đang tiếp tục bổ sung đạt ngưỡng ([evidence/summary.md](evidence/summary.md)).
+**Hiện trạng (CP3, 28/11):** đã nối **model thật** (`ag/gemini-3.8-flash` qua `API_BASE_URL` OpenAI-compatible), mở rộng đủ **25 câu thử** (`eval/benchmark.csv`), hoàn tất **lượt 1** (`eval/run-1.csv`, `run-1@20261128-015107`: **24/25 = 96%** đạt chuẩn CP2); khảo sát đạt ngưỡng nguồn (20 người hợp lệ) nhưng **giả thuyết pain không đạt** (4/20) ([evidence/summary.md](evidence/summary.md)).
 
 ---
 
