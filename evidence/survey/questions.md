@@ -2,8 +2,10 @@
 
 - Soạn: 27/11/2026 17:38, trước khi có câu trả lời nào.
 - Kênh đã gửi: ____
-- Giờ mở / giờ chốt: ____ / ____
-- Không thu tên, email, mã học viên. Thành viên nhóm không điền.
+- Giờ mở / giờ chốt: phản hồi đầu 27/11 17:51 / chốt số liệu 28/11 08:43 (22 phản hồi, cuối cùng 08:26).
+- Kết quả: [results.csv](results.csv), đã bỏ cột email. Đội trưởng xác nhận các phản hồi đều do người thật ngoài nhóm tự điền.
+- Khác bản soạn: form thật có thêm một câu email không bắt buộc ở cuối (để nhận quà), chưa ai điền.
+- Không thu tên, mã học viên. Thành viên nhóm không điền.
 - Quà: bốc thăm ngẫu nhiên 1 slot ge. Email để ở **form riêng** (không bắt buộc), không gắn với câu trả lời, không đưa vào repo, xoá sau khi trao. Hạn chế: có quà thì có thể có người tích cho nhanh.
 
 ## Câu hỏi (câu 1–9 chỉ tích, bắt buộc; câu 10 tuỳ chọn)

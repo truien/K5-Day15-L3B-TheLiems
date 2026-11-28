@@ -8,7 +8,7 @@ Hackathon AI20K khoá 5 · Track A (EdTech) · Lớp L3B. **Thành viên:** [TEA
 
 **Không làm:** viết code hay làm hộ bài · chấm điểm hoặc khẳng định bài đã đạt · chạy lệnh, truy cập máy hay repo của học viên · thêm yêu cầu ngoài nội dung đề.
 
-**Hiện trạng (CP2, 27/11):** đã chọn hướng; bằng chứng pain **chưa đạt ngưỡng** ([evidence/summary.md](evidence/summary.md)); bản chạy thử đi hết luồng nhưng **model còn giả, chưa gọi AI thật**.
+**Hiện trạng (CP3, 28/11):** đã nối **model thật** (`ag/gemini-3.8-flash` qua `API_BASE_URL` OpenAI-compatible), mở rộng đủ **25 câu thử** (`eval/benchmark.csv`), hoàn tất **lượt 1** (`eval/run-1.csv`, `run-1@20261128-015107`: **24/25 = 96%** đạt chuẩn CP2); khảo sát đạt ngưỡng nguồn (20 người hợp lệ) nhưng **giả thuyết pain không đạt** (4/20) ([evidence/summary.md](evidence/summary.md)).
 
 ---
 
@@ -85,7 +85,7 @@ Nhóm dùng stack khác (Node, Streamlit, notebook…): sửa hàm `run_app()` t
 
 | Thành phần | Thật / Giả | Ghi chú |
 |---|---|---|
-| Lời gọi AI ở quyết định trung tâm | **Giả** (chế độ giả của khung; bắt buộc thật từ CP3) | Model: ____ |
+| Lời gọi AI ở quyết định trung tâm | **Thật** (đã nối từ CP3; giữ nhánh `fake` khi chưa điền `.env`) | Model chạy lượt 1: `ag/gemini-3.8-flash` (qua `API_BASE_URL` OpenAI-compatible, đếm token thật từ `usage` gồm `reasoning_tokens`) |
 | Công cụ đọc đề lab (`read_lab`, `list_labs`) | **Thật** | Đọc file trong `data/labs/`, không tác động ra ngoài |
 | Chọn mã yêu cầu khi model giả | **Giả** | Luật viết sẵn trong code (`_fake_model_decision`, `codebase/agent.py`), không phải AI |
 | Đề lab dùng chạy thử | `synthetic` | LAB1–LAB3 nhóm tự viết, không chép đề lab của khoá ([data/DATA_CARD.md](data/DATA_CARD.md)) |

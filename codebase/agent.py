@@ -39,7 +39,7 @@ BƯỚC 2 — LỌC MÃ YÊU CẦU (chỉ chạy khi không vi phạm Bước 1)
 Đặt "action": "checklist" và đọc toàn bộ đề lab (mỗi yêu cầu có mã trong ngoặc vuông [MÃ]) để chọn TẤT CẢ các mã áp dụng cho checkpoint học viên sắp làm:
 1. Tất cả yêu cầu nằm trong mục của chính checkpoint đó.
 2. TẤT CẢ các quy định chung (mục 0 / Quy định chung) áp dụng cho mọi checkpoint, trừ khi quy định ghi rõ chỉ áp dụng cho checkpoint khác.
-3. TẤT CẢ các yêu cầu ở phần khác (đặc biệt mục Tiêu chí chấm & Nộp bài) có nhắc tới checkpoint đó, có liên quan trực tiếp tới hạng mục của checkpoint đó, hoặc trả lời trực tiếp câu hỏi phạm vi của học viên — không được bỏ sót.
+3. TẤT CẢ các yêu cầu ở phần khác (đặc biệt mục Tiêu chí chấm & Nộp bài) có nhắc tới checkpoint đó, có liên quan trực tiếp tới hạng mục của checkpoint đó, hoặc trả lời trực tiếp câu hỏi phạm vi của học viên — không được bỏ sót. KHÔNG chọn các mục nộp bài tổng quát (như viết README, đặt repo Public) hoặc mục gắn với checkpoint khác nếu chúng không liên quan đến checkpoint đang hỏi và học viên không hỏi tới.
 - CHỈ chọn mã [MÃ] có thật trong đề lab được cung cấp. KHÔNG tự bịa mã, KHÔNG thêm yêu cầu ngoài đề.
 - Nếu GHI CHÚ THÊM CỦA HỌC VIÊN có hỏi một chi tiết cụ thể mà đề KHÔNG quy định → ghi ngắn gọn chi tiết còn thiếu đó bằng tiếng Việt vào "unclear", tuyệt đối KHÔNG tự đoán hay bịa con số/quy định. Nếu không có chi tiết nào chưa rõ (hoặc chỉ là lời dẫn bối cảnh), để "unclear": [].
 
@@ -64,32 +64,42 @@ Chỉ trả về ĐÚNG MỘT đối tượng JSON hợp lệ (không thêm ch�
 """
 
 _RE_CP_NORMALIZE = re.compile(r"^\s*(?:CP|CHECKPOINT)\s*(\d+)\s*$", re.IGNORECASE)
-_RE_LAB_NORMALIZE = re.compile(r"^\s*LAB\s*(\d+)\s*$", re.IGNORECASE)
+_RE_LAB_NORMALIZE = re.compile(r"^\s*(LAB|DAY)\s*(\d+)\s*$", re.IGNORECASE)
 _RE_FLEX_PREFIX = re.compile(
-    r"^\s*(LAB\s*\d+)\s*(?:[:,\-/]|\s)+\s*((?:CP|CHECKPOINT)\s*\d+)\b(?:\s*[:,\-/]?\s*(.*))?$",
+    r"^\s*((?:LAB|DAY)\s*\d+)\s*(?:[:,\-/]|\s)+\s*((?:CP|CHECKPOINT)\s*\d+)\b(?:\s*[:,\-/]?\s*(.*))?$",
     re.IGNORECASE | re.DOTALL,
 )
-_RE_FIND_LAB = re.compile(r"\bLAB\s*(\d+)\b", re.IGNORECASE)
+_RE_FIND_LAB = re.compile(r"\b(LAB|DAY)\s*(\d+)\b", re.IGNORECASE)
 _RE_FIND_CP = re.compile(r"\b(?:CP|CHECKPOINT)\s*(\d+)\b", re.IGNORECASE)
 _RE_CODE_BRACKET = re.compile(r"\[([A-Za-z0-9_.-]+)\]")
 
 _REFUSAL_PATTERNS = (
     "viết code",
     "viet code",
+    "viết luôn",
+    "viet luon",
+    "viết sẵn code",
     "code hộ",
     "code ho",
     "làm hộ",
     "lam ho",
     "giải hộ",
     "giai ho",
+    "log giả",
+    "log gia",
+    "file giả",
     "chấm điểm",
     "cham diem",
     "chấm bài",
     "cham bai",
     "chấm giúp",
     "cham giup",
+    "khẳng định bài",
+    "đã đạt",
     "xem bài đã đạt chưa",
     "xem da dat chua",
+    "sửa script",
+    "sua script",
     "chạy lệnh",
     "chay lenh",
     "sửa code giúp",
@@ -103,6 +113,11 @@ _INJECTION_PATTERNS = (
     "bỏ qua hướng dẫn",
     "bo qua huong dan",
     "bỏ qua mọi hướng dẫn",
+    "bỏ qua quy tắc",
+    "bo qua quy tac",
+    "system override",
+    "đóng vai",
+    "dong vai",
     "ignore previous",
     "ignore all previous",
     "disregard previous",
@@ -118,7 +133,7 @@ _TOOL_SCOPE_MSG = (
 def _norm_lab(val: str) -> str:
     s = (val or "").strip()
     m = _RE_LAB_NORMALIZE.match(s)
-    return ("LAB" + m.group(1)) if m else s.upper()
+    return (m.group(1).upper() + m.group(2)) if m else s.upper()
 
 
 def _norm_cp(val: str) -> str:
@@ -157,22 +172,24 @@ def parse_input(text: str) -> dict:
     # Nhánh 2b: câu tự nhiên chứa cả mã lab và mã checkpoint (vd "mình làm cp2 của lab1, ...")
     m_lab = _RE_FIND_LAB.search(raw)
     m_cp = _RE_FIND_CP.search(raw)
-    if m_lab and m_cp:
+    lab_found = (m_lab.group(1).upper() + m_lab.group(2)) if m_lab else ""
+    cp_found = ("CP" + m_cp.group(1)) if m_cp else ""
+    if lab_found and cp_found:
         remainder = _RE_FIND_LAB.sub("", raw)
         remainder = _RE_FIND_CP.sub("", remainder)
         remainder = re.sub(r"[\s:,\-/]+", " ", remainder).strip()
         extra_note = raw if remainder else ""
         return {
             "raw": raw,
-            "lab_id": "LAB" + m_lab.group(1),
-            "checkpoint": "CP" + m_cp.group(1),
+            "lab_id": lab_found,
+            "checkpoint": cp_found,
             "extra_note": extra_note,
         }
 
     return {
         "raw": raw,
-        "lab_id": ("LAB" + m_lab.group(1)) if m_lab else "",
-        "checkpoint": ("CP" + m_cp.group(1)) if m_cp else "",
+        "lab_id": lab_found,
+        "checkpoint": cp_found,
         "extra_note": "",
     }
 
@@ -316,6 +333,32 @@ def _parse_model_reply(reply_text: str, valid_codes: set) -> dict:
     }
 
 
+_RE_LIKE_LAB_CODE = re.compile(r"\[([A-Za-z]+\d+-\d+(?:\.\d+)?)\]")
+
+
+def _sanitize_free_text(text: str, valid_ci: dict, forbid_code_block: bool = False) -> str:
+    """Chặn mã bịa dạng [LABx-y.z] và chặn rò rỉ code block trong văn bản tự do của model."""
+    cleaned = (text or "").strip()
+    if forbid_code_block and "```" in cleaned:
+        note("chặn code block trong nhánh TỪ CHỐI")
+        return ""
+
+    dropped = []
+
+    def _check_code(match):
+        raw_code = match.group(1).strip()
+        canonical = valid_ci.get(raw_code.upper())
+        if canonical:
+            return "[%s]" % canonical
+        dropped.append(raw_code)
+        return ""
+
+    cleaned = _RE_LIKE_LAB_CODE.sub(_check_code, cleaned)
+    if dropped:
+        note("loại mã ngoài đề trong văn bản tự do: %s" % ", ".join(dropped))
+    return re.sub(r"\s{2,}", " ", cleaned).strip()
+
+
 def _filter_valid_codes(selected_codes: list, lab: dict) -> list:
     """Bước 4: code loại mọi mã không tồn tại trong đề, giữ đúng thứ tự trong đề."""
     valid_ci = {item["code"].upper(): item["code"] for item in lab["items"]}
@@ -366,10 +409,16 @@ def answer(text: str) -> dict:
     extra_note = parsed["extra_note"]
 
     if not lab_id or not checkpoint:
-        if _looks_like_refusal(parsed["raw"]) and not _looks_like_injection(parsed["raw"]):
+        if _looks_like_injection(parsed["raw"]):
+            note("dừng: từ chối chỉ dẫn chen ngoài phạm vi")
+            return {
+                "output": "TỪ CHỐI: không làm theo chỉ dẫn thay đổi quy tắc hệ thống hay yêu cầu ngoài phạm vi. %s"
+                % _TOOL_SCOPE_MSG
+            }
+        if _looks_like_refusal(parsed["raw"]):
             note("dừng: từ chối yêu cầu ngoài phạm vi")
             return {
-                "output": "TỪ CHỐI: không hỗ trợ viết code, làm hộ bài hay chấm điểm. %s"
+                "output": "TỪ CHỐI: không hỗ trợ viết code, làm hộ bài, tạo kết quả giả, chấm điểm hay chạy lệnh. %s"
                 % _TOOL_SCOPE_MSG
             }
         note("dừng: thiếu mã lab hoặc checkpoint")
@@ -402,7 +451,8 @@ def answer(text: str) -> dict:
     user_prompt = _build_user_prompt(lab, checkpoint, extra_note)
     reply = call_model(SYSTEM, user_prompt)
 
-    valid_codes = {item["code"] for item in lab["items"]}
+    valid_ci = {item["code"].upper(): item["code"] for item in lab["items"]}
+    valid_codes = set(valid_ci.values())
     if reply["model"] == "fake":
         decision = _fake_model_decision(lab, checkpoint, extra_note)
     else:
@@ -410,14 +460,20 @@ def answer(text: str) -> dict:
 
     if decision["action"] == "refuse":
         note("dừng: từ chối yêu cầu ngoài phạm vi")
-        reason = (decision["refusal_reason"] or "yêu cầu nằm ngoài phạm vi hỗ trợ").rstrip(". ")
+        safe_reason = _sanitize_free_text(
+            decision["refusal_reason"], valid_ci, forbid_code_block=True
+        )
+        reason = (safe_reason or "yêu cầu nằm ngoài phạm vi hỗ trợ").rstrip(". ")
         if reason.upper().startswith("TỪ CHỐI"):
             return {"output": "%s. %s" % (reason, _TOOL_SCOPE_MSG)}
         return {"output": "TỪ CHỐI: %s. %s" % (reason, _TOOL_SCOPE_MSG)}
 
-    # Bước 4: code loại mã không có trong đề
+    # Bước 4: code loại mã không có trong đề (cả trong YÊU CẦU lẫn KHÔNG RÕ)
     verified_items = _filter_valid_codes(decision["selected_codes"], lab)
+    safe_unclear = [
+        s for s in (_sanitize_free_text(u, valid_ci) for u in decision["unclear"]) if s
+    ]
 
     # Bước 5: in kết quả theo đúng giao ước
-    output = _format_checklist(verified_items, decision["unclear"], checkpoint)
+    output = _format_checklist(verified_items, safe_unclear, checkpoint)
     return {"output": output}
