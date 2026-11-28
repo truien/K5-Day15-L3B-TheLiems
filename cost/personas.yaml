@@ -38,9 +38,9 @@ personas:           # ≥3 kiểu người dùng; share cộng lại = 1
 #     inputs: ["câu hỏi kiểu 1", "câu hỏi kiểu 2"]
 
 prices:             # USD / 1 triệu token — chép từ further-reading/model-prices.md của repo đề. ≥2 mức model
-  - model: gemini-3.1-flash-lite
-    input: 0.25
-    output: 1.50
+  - model: gemini-3.8-flash-lite
+    input: 0.75
+    output: 3.75
     source: "https://ai.google.dev/gemini-api/docs/pricing · xem 28/11/2026"
   - model: gemini-4-hydrogen
     input: 1.50
