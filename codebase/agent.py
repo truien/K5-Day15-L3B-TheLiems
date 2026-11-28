@@ -76,52 +76,20 @@ _RE_CODE_BRACKET = re.compile(r"\[([A-Za-z0-9_.-]+)\]")
 _REFUSAL_PATTERNS = (
     "viết code",
     "viet code",
-    "viết luôn",
-    "viet luon",
-    "viết sẵn code",
-    "code hộ",
-    "code ho",
     "làm hộ",
     "lam ho",
-    "giải hộ",
-    "giai ho",
-    "log giả",
-    "log gia",
-    "file giả",
     "chấm điểm",
     "cham diem",
     "chấm bài",
     "cham bai",
-    "chấm giúp",
-    "cham giup",
-    "khẳng định bài",
-    "đã đạt",
-    "xem bài đã đạt chưa",
-    "xem da dat chua",
-    "sửa script",
-    "sua script",
     "chạy lệnh",
     "chay lenh",
-    "sửa code giúp",
-    "sua code giup",
-    "write code",
-    "solve this",
-    "grade my",
 )
 
 _INJECTION_PATTERNS = (
     "bỏ qua hướng dẫn",
     "bo qua huong dan",
-    "bỏ qua mọi hướng dẫn",
-    "bỏ qua quy tắc",
-    "bo qua quy tac",
-    "system override",
-    "đóng vai",
-    "dong vai",
     "ignore previous",
-    "ignore all previous",
-    "disregard previous",
-    "system prompt",
 )
 
 _TOOL_SCOPE_MSG = (
@@ -360,7 +328,7 @@ def _sanitize_free_text(text: str, valid_ci: dict, forbid_code_block: bool = Fal
 
 
 def _filter_valid_codes(selected_codes: list, lab: dict) -> list:
-    """Bước 4: code loại mọi mã không tồn tại trong đề, giữ đúng thứ tự trong đề."""
+    """Bước 4: code loại mọi mã không tồn tại trong đề và tự bổ sung đủ quy định chung mục 0, giữ đúng thứ tự trong đề."""
     valid_ci = {item["code"].upper(): item["code"] for item in lab["items"]}
     selected_set = set()
     dropped = []
@@ -374,6 +342,15 @@ def _filter_valid_codes(selected_codes: list, lab: dict) -> list:
 
     if dropped:
         note("loại mã không có trong đề: %s" % ", ".join(dropped))
+
+    added_general = []
+    for item in lab["items"]:
+        if item["section_type"] == "general" and item["code"] not in selected_set:
+            selected_set.add(item["code"])
+            added_general.append(item["code"])
+
+    if added_general:
+        note("bổ sung quy định chung mục 0: %s" % ", ".join(added_general))
 
     return [item for item in lab["items"] if item["code"] in selected_set]
 
