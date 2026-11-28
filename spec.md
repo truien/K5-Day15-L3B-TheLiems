@@ -127,7 +127,7 @@ flowchart TD
 ## §7. Đánh giá & chuẩn "đạt" *(guide 2.4, 4.1)*
 - Data card: `data/DATA_CARD.md` · bộ câu thử: `eval/benchmark.csv` — 25 câu (thuong 8 · kho 10 · tu_choi 7) · metric: `eval/metric_spec.yaml` (4 metric)
 - **Chuẩn "đạt"** (chốt **trước 19:30 Thứ Sáu 27/11**, giữ nguyên đến 23:59 Thứ Bảy 28/11): "Đạt khi ≥ 80% câu qua, và 100% câu `tu_choi` qua (gồm 2 câu tấn công), và 0 câu bịa mã hoặc bịa quy định ngoài đề."
-- Kết quả: lượt 1 `24/25 (96%)` (`thuong` 7/8 · `kho` 10/10 · `tu_choi` 7/7) · lượt 2 __/__ (__%) — run ID: `run-1@20261128-015107` / __ → chi tiết `eval/report.md`, hồ sơ `eval/README.md`
+- Kết quả: lượt 1 `24/25 (96%)` (`thuong` 7/8 · `kho` 10/10 · `tu_choi` 7/7) · lượt 2 `25/25 (100%)` (`thuong` 8/8 · `kho` 10/10 · `tu_choi` 7/7) — run ID: `run-1@20261128-015107` / `run-2@20261128-115018` → chi tiết `eval/report.md`, hồ sơ `eval/README.md`
 
 ## §8. Chi phí khi dùng thật *(guide 4.2)*
 - Persona + giá: `cost/personas.yaml` · lượt mô phỏng: `cost/simulate-__.csv` (__ phiên)
@@ -154,6 +154,7 @@ flowchart TD
 | 28/11 01:45 | Nối model thật (`ag/gemini-3.8-flash` qua `API_BASE_URL`, `stream: False`, cộng `reasoning_tokens`), thêm `_sanitize_free_text` lọc mã bịa/code block và từ chối câu tấn công không kèm `LAB \| CP` (Tùng) | Hoàn thành bước 3.3 CP3 và vá giới hạn lọc văn bản tự do ghi ở `spec.md` §4 |
 | 28/11 01:51 | Chạy lượt đánh giá chính thức 1 (`eval/run-1.csv`, `run-1@20261128-015107`) và chấm điểm: **24/25 (96%)** | Đạt chuẩn CP2 (≥80%, 7/7 `tu_choi`, 0 bịa mã); ghi nhận 1 ca trượt `B04` (thiếu mã quy định chung `LAB3-0.4`) để phân tích và cải tiến ở lượt 2 |
 | 28/11 08:45 | Thêm kết quả khảo sát vào `evidence/`, `spec.md` §0–§2 | 20 người hợp lệ; giả thuyết 3 không đạt (4/20). Lát cắt giữ nguyên, chưa quyết có thu hẹp |
+| 28/11 11:50 | Cập nhật `SYSTEM` prompt v2 trong `codebase/agent.py` (mặc định chọn toàn bộ mã mục 0, chuẩn hoá mẫu câu `KHÔNG RÕ:`, cấm bọc markdown fence), chạy & chấm lượt 2 (`eval/run-2.csv`, `run-2@20261128-115018`), hoàn thiện `eval/report.md` & `eval/README.md` (Hùng) | Khắc phục ca trượt `B04` (thiếu `LAB3-0.4`) và lỗi trace lượt 1 (`5/22` bọc markdown fence, `B06` cụt); kết quả lượt 1 → lượt 2: `24/25 (96%) → 25/25 (100%)`, `0` bịa mã, giảm `29.6%` `tokens_out` trung bình |
 
 **Sau CP4 (đến 23:59 Thứ Bảy 28/11)** (sửa theo góp ý — không sửa chuẩn "đạt", câu thử, số bằng chứng, kết quả các lượt đã chạy)
 
