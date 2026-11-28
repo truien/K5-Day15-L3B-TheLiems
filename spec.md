@@ -163,4 +163,4 @@ flowchart TD
 
 | Thời điểm | Đổi gì | Vì sao |
 |---|---|---|
-|  |  |  |
+| 28/11 14:36 | Thêm `reflection/nguyen-trong-truyen.md` | Reflection cá nhân theo guide 5.3 |
