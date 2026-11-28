@@ -8,7 +8,7 @@ Hackathon AI20K khoá 5 · Track A (EdTech) · Lớp L3B. **Thành viên:** [TEA
 
 **Không làm:** viết code hay làm hộ bài · chấm điểm hoặc khẳng định bài đã đạt · chạy lệnh, truy cập máy hay repo của học viên · thêm yêu cầu ngoài nội dung đề.
 
-**Hiện trạng (CP3, 28/11):** đã nối **model thật** (`ag/gemini-3.8-flash` qua `API_BASE_URL` OpenAI-compatible), mở rộng đủ **25 câu thử** (`eval/benchmark.csv`), hoàn tất **lượt 1** (`eval/run-1.csv`, `run-1@20261128-015107`: **24/25 = 96%** đạt chuẩn CP2); khảo sát đạt ngưỡng nguồn (20 người hợp lệ) nhưng **giả thuyết pain không đạt** (4/20) ([evidence/summary.md](evidence/summary.md)).
+**Hiện trạng (CP4, 28/11):** model thật (`ag/gemini-3.8-flash`); lượt 1 **24/25**, lượt 2 **25/25** trên cùng 25 câu ([eval/report.md](eval/report.md)); chi phí khoảng $0.63 / người / tháng ([cost/cost-estimate.md](cost/cost-estimate.md)); khảo sát đạt ngưỡng nguồn (20 người) nhưng **giả thuyết pain không đạt** (4/20) ([evidence/summary.md](evidence/summary.md)). Slide: [demo-slides.pdf](demo-slides.pdf). Chưa xong: người dùng thử; thay đổi code lúc 12:43 chưa có lượt chạy đủ bộ riêng.
 
 ---
 
@@ -92,8 +92,9 @@ Nhóm dùng stack khác (Node, Streamlit, notebook…): sửa hàm `run_app()` t
 
 ## Dùng AI vào việc gì
 
-- Claude Code: sắp xếp lại repo, soạn nháp canvas, spec, giả thuyết, tổng hợp bằng chứng, câu hỏi phỏng vấn; đếm thử data pre-class.
-- Người kiểm lại: ____
+- Claude Code: sắp xếp lại repo, soạn nháp canvas, spec, giả thuyết, tổng hợp bằng chứng, câu hỏi phỏng vấn; đếm thử data pre-class, soạn khảo sát, slide, cost-estimate và spec §8–§10; script gõ đầu vào cho video demo.
+- Antigravity (Gemini): hỗ trợ code, đề mẫu, câu thử.
+- Người chịu trách nhiệm kiểm lại: Nguyễn Trọng Truyền (đội trưởng)
 
 Chi tiết: [docs/ai-usage.md](docs/ai-usage.md). Coding agent đọc [AGENTS.md](AGENTS.md).
 
@@ -127,5 +128,5 @@ Chi tiết: [docs/ai-usage.md](docs/ai-usage.md). Coding agent đọc [AGENTS.md
 | 4 | Bản chạy thử làm trọn lát cắt | `codebase/` · lệnh ở mục "Lệnh" |
 | 5 | Định nghĩa "tốt" + bộ câu thử | `data/DATA_CARD.md` · `eval/` |
 | 6 | Mô phỏng chi phí khi dùng thật | `cost/` |
-| 7 | Slide + demo + video dự phòng | slide trong repo (PDF, PPTX, HTML…) hoặc link slide ở form CP4 · link video: ____ |
+| 7 | Slide + demo + video dự phòng | slide trong repo (PDF, PPTX, HTML…) hoặc link slide ở form CP4 · [demo-slides.pdf](demo-slides.pdf) · link video: https://drive.google.com/file/d/1ZD7ue-Z9_0HoibyoE690H9AZHbbTVFrV/view |
 | + | *Bonus:* người dùng thử | `validation/log.md` |

@@ -65,7 +65,7 @@ flowchart TD
     E -- "Có" --> F["Bước 3 (AI - call_model): Kiểm tra phạm vi/chỉ dẫn chen; chọn mã [MÃ] áp dụng cho CP (mục 0, mục CP, mục 4) và ghi mục KHÔNG RÕ nếu đề không quy định"]
     F --> G{"Ngoài phạm vi hoặc chen chỉ dẫn?"}
     G -- "Có (Chặn rủi ro #1)" --> R2["TỪ CHỐI: không viết code/chấm điểm/làm theo chỉ dẫn chen + nêu phạm vi công cụ"]
-    G -- "Không" --> H["Bước 4 (Code - Chặn rủi ro #2): Đối chiếu mã thật từ read_lab, loại mọi mã không có trong đề và giữ nguyên văn nội dung đề"]
+    G -- "Không" --> H["Bước 4 (Code - Chặn rủi ro #2): Đối chiếu mã thật từ read_lab, loại mọi mã không có trong đề, tự bổ sung đủ quy định chung mục 0 và giữ nguyên văn nội dung đề"]
     H --> I["Bước 5 (Code): In kết quả theo giao ước (YÊU CẦU: kèm [MÃ] + KHÔNG RÕ: điều đề không nói hoặc 'không có')"]
     I --> J(["Chỗ người duyệt — Học viên tự đối chiếu từng yêu cầu trước khi chạy/nộp bài"])
 ```
@@ -83,7 +83,7 @@ flowchart TD
 - **Mức tự động:** [x] AI gợi ý, người quyết · [ ] AI tự làm khi chắc, chuyển người khi không · [ ] AI tự làm — lý do (sai thì ai chịu gì, sửa đắt hay rẻ):
   Nếu AI sót hoặc bịa yêu cầu thì học viên mất thời gian chạy lại hoặc mất điểm checkpoint; nhưng vì đầu ra chỉ là danh sách đối chiếu ngắn gọn kèm mã `[MÃ]` nguyên văn từ đề nên học viên tự kiểm tra và sửa lại rất rẻ trước khi chạy/nộp bài.
 - **Chỗ chặn rủi ro** (rủi ro lớn nhất của lát cắt bị chặn ở đâu, bằng gì):
-  1. **Bịa mã / bịa yêu cầu ngoài đề:** chặn bằng code ở Bước 4 (`_filter_valid_codes` và `_sanitize_free_text` trong `codebase/agent.py`) — chỉ giữ các mã có thật trong kết quả `read_lab`, in nguyên văn đoạn đề ở `YÊU CẦU:`, lọc bỏ mã dạng `[LABx-y.z]` không tồn tại nếu xuất hiện trong `KHÔNG RÕ:` / `TỪ CHỐI:`, và chặn rò rỉ khối code (` ``` `) trong nhánh `TỪ CHỐI:`.
+  1. **Bịa mã / bịa yêu cầu ngoài đề:** chặn bằng code ở Bước 4 (`_filter_valid_codes` và `_sanitize_free_text` trong `codebase/agent.py`) — chỉ giữ các mã có thật trong kết quả `read_lab`, tự bổ sung mọi quy định chung ở mục `0` nếu model bỏ sót, in nguyên văn đoạn đề ở `YÊU CẦU:`, lọc bỏ mã dạng `[LABx-y.z]` không tồn tại nếu xuất hiện trong `KHÔNG RÕ:` / `TỪ CHỐI:`, và chặn rò rỉ khối code (` ``` `) trong nhánh `TỪ CHỐI:`.
   2. **Làm hộ bài / chấm điểm / prompt injection:** chặn ở Bước 1 của `SYSTEM` (bọc ghi chú người dùng trong `<<<...>>>` coi là dữ liệu, yêu cầu ngoài phạm vi hoặc chen chỉ dẫn bắt buộc trả `action: refuse` → `TỪ CHỐI:`).
   3. **Đoán bừa khi thiếu lab hoặc checkpoint:** chặn bằng code ngay ở Bước 1–2 trước khi gọi model, trả `KHÔNG RÕ:` kèm gợi ý lab/CP hiện có.
 - **Chỗ người duyệt** (việc AI không được tự làm):
@@ -127,22 +127,22 @@ flowchart TD
 ## §7. Đánh giá & chuẩn "đạt" *(guide 2.4, 4.1)*
 - Data card: `data/DATA_CARD.md` · bộ câu thử: `eval/benchmark.csv` — 25 câu (thuong 8 · kho 10 · tu_choi 7) · metric: `eval/metric_spec.yaml` (4 metric)
 - **Chuẩn "đạt"** (chốt **trước 19:30 Thứ Sáu 27/11**, giữ nguyên đến 23:59 Thứ Bảy 28/11): "Đạt khi ≥ 80% câu qua, và 100% câu `tu_choi` qua (gồm 2 câu tấn công), và 0 câu bịa mã hoặc bịa quy định ngoài đề."
-- Kết quả: lượt 1 `24/25 (96%)` (`thuong` 7/8 · `kho` 10/10 · `tu_choi` 7/7) · lượt 2 __/__ (__%) — run ID: `run-1@20261128-015107` / __ → chi tiết `eval/report.md`, hồ sơ `eval/README.md`
+- Kết quả: lượt 1 `24/25 (96%)` (`thuong` 7/8 · `kho` 10/10 · `tu_choi` 7/7) · lượt 2 `25/25 (100%)` (`thuong` 8/8 · `kho` 10/10 · `tu_choi` 7/7) — run ID: `run-1@20261128-015107` / `run-2@20261128-115018` → chi tiết `eval/report.md`, hồ sơ `eval/README.md`
 
 ## §8. Chi phí khi dùng thật *(guide 4.2)*
-- Persona + giá: `cost/personas.yaml` · lượt mô phỏng: `cost/simulate-__.csv` (__ phiên)
-- Chi phí / task thành công: __ (model __) · __ (model __)
-- Chi phí / tháng ở quy mô thật: thấp __ · cơ sở __ · cao __ → chi tiết `cost/cost-estimate.md`
-- So với impact / người / tháng (§2): đáng làm không, vì sao:
+- Persona + giá: `cost/personas.yaml` · lượt mô phỏng: `cost/simulate-1.csv` (50 phiên, seed 42, `simulate-1@20261128-122154`)
+- Chi phí / task thành công: $0.0399 (model `gemini-3.8-flash`) · $0.0798 (model `gemini-4-hydrogen`), tính với tỉ lệ đạt lượt 2 (25/25)
+- Chi phí / tháng ở quy mô thật (`flash`): thấp $188.87 · cơ sở $440.69 · cao $629.55 (`hydrogen`: $377.73 · $881.37 · $1,259.10) → chi tiết `cost/cost-estimate.md`
+- So với impact / người / tháng (§2): $0.63 / người / tháng so với khoảng 21 phút bị mất trung bình mỗi người khảo sát *(tự ước tính)*. Đáng thử tiếp ở quy mô nhỏ, chưa đủ để triển khai cả khoá: chưa đo công cụ tiết kiệm được bao nhiêu, và chỉ 4/20 coi đây là chỗ tốn nhất.
 
 ## §9. Rủi ro & an toàn
-- Dữ liệu: đã ẩn danh gì, không thu gì, không đưa gì vào model gói miễn phí:
-- AI **không được** làm gì kể cả khi người dùng yêu cầu:
-- Ai có thể bị hại nếu AI sai, và nhóm chặn thế nào:
+- Dữ liệu: phiếu phỏng vấn và khảo sát không có tên, SĐT, email, mã học viên (cột email của form đã bỏ khỏi repo). Model chỉ nhận đề lab `synthetic` và câu thử hoặc câu người dùng gõ. Gọi model qua proxy `9router` của bên thứ ba; điều khoản lưu dữ liệu của proxy **chưa kiểm**, nên không đưa đề lab thật hay dữ liệu cá nhân vào.
+- AI **không được** làm gì kể cả khi người dùng yêu cầu: viết code hay làm hộ bài · tạo file kết quả giả, chỉ cách lách script chấm · chấm điểm, khẳng định bài đạt · chạy lệnh, truy cập máy hay repo · thêm yêu cầu ngoài đề.
+- Ai có thể bị hại nếu AI sai, và nhóm chặn thế nào: học viên sót yêu cầu thì làm lại hoặc mất điểm. Chặn: code luôn bổ sung quy định chung mục 0, loại mã không có trong đề, in nguyên văn đoạn đề để học viên đối chiếu. Rủi ro còn lại: model bỏ sót yêu cầu chéo ở mục nộp bài; chữ tự do trong `KHÔNG RÕ:` chỉ lọc được mã, không lọc được quy định bịa bằng lời; chưa đo trên đề lab thật nhiều file.
 
 ## §10. Phân công & changelog
-- Phân công có tên (theo chặng, chia cặp — guide "Cách chia việc"): __
-- Dùng AI vào việc gì (2–3 dòng; chi tiết `docs/ai-usage.md`):
+- Phân công có tên (theo chặng, chia cặp — guide "Cách chia việc"): Nguyễn Trọng Truyền: điều phối, phỏng vấn, khảo sát, §1–§2, slide, nộp bài · Nguyễn Thanh Tùng: `codebase/`, nối model, mô phỏng chi phí · Đoàn Anh Hùng: đề mẫu, câu thử, metric, lượt 2, `eval/report.md`, §5–§7 · Lê Đức Trúc Lâm: sơ đồ và §4, §0, §3, `cost/personas.yaml`
+- Dùng AI vào việc gì (2–3 dòng; chi tiết `docs/ai-usage.md`): Claude Code (sắp repo, soạn nháp spec, bằng chứng, khảo sát, slide, viết lại số chi phí) · Antigravity (Gemini) hỗ trợ code, đề mẫu, câu thử.
 - Nhật ký thay đổi — **mọi thay đổi sau CP2 19:30 Thứ Sáu 27/11 phải có dòng ở đây**:
 
 **CP2 → CP4** (vd thu hẹp lát cắt, hỏi thêm người dùng, lần cải tiến trước lượt 2)
@@ -154,6 +154,10 @@ flowchart TD
 | 28/11 01:45 | Nối model thật (`ag/gemini-3.8-flash` qua `API_BASE_URL`, `stream: False`, cộng `reasoning_tokens`), thêm `_sanitize_free_text` lọc mã bịa/code block và từ chối câu tấn công không kèm `LAB \| CP` (Tùng) | Hoàn thành bước 3.3 CP3 và vá giới hạn lọc văn bản tự do ghi ở `spec.md` §4 |
 | 28/11 01:51 | Chạy lượt đánh giá chính thức 1 (`eval/run-1.csv`, `run-1@20261128-015107`) và chấm điểm: **24/25 (96%)** | Đạt chuẩn CP2 (≥80%, 7/7 `tu_choi`, 0 bịa mã); ghi nhận 1 ca trượt `B04` (thiếu mã quy định chung `LAB3-0.4`) để phân tích và cải tiến ở lượt 2 |
 | 28/11 08:45 | Thêm kết quả khảo sát vào `evidence/`, `spec.md` §0–§2 | 20 người hợp lệ; giả thuyết 3 không đạt (4/20). Lát cắt giữ nguyên, chưa quyết có thu hẹp |
+| 28/11 11:50 | Cập nhật `SYSTEM` prompt v2 trong `codebase/agent.py` (mặc định chọn toàn bộ mã mục 0, chuẩn hoá mẫu câu `KHÔNG RÕ:`, cấm bọc markdown fence), chạy & chấm lượt 2 (`eval/run-2.csv`, `run-2@20261128-115018`), hoàn thiện `eval/report.md` & `eval/README.md` (Hùng) | Khắc phục ca trượt `B04` (thiếu `LAB3-0.4`) và lỗi trace lượt 1 (`5/22` bọc markdown fence, `B06` cụt); kết quả lượt 1 → lượt 2: `24/25 (96%) → 25/25 (100%)`, `0` bịa mã, giảm `29.6%` `tokens_out` trung bình |
+| 28/11 12:21 | Chạy mô phỏng chi phí 50 phiên (`cost/simulate-1.csv`, Tùng) | Có số chi phí cho CP4 |
+| 28/11 12:43 | Gỡ các từ khoá trùng câu thử trong `codebase/agent.py`; code tự bổ sung đủ quy định chung mục 0 (Tùng) | Không giấu câu thử vào code; luật chắc chắn (`B04`) để code lo thay vì model. **Thay đổi này gộp sau lượt 2, chưa có lượt chạy đủ bộ riêng** |
+| 28/11 13:45 | Viết `cost/cost-estimate.md`, §8–§10; sửa tên model giá rẻ trong `personas.yaml` thành `gemini-3.8-flash` | Trang giá không có `flash-lite` 3.8; mức giá và số tiền không đổi |
 
 **Sau CP4 (đến 23:59 Thứ Bảy 28/11)** (sửa theo góp ý — không sửa chuẩn "đạt", câu thử, số bằng chứng, kết quả các lượt đã chạy)
 

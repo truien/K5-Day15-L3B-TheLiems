@@ -13,24 +13,24 @@ users:              # số người dùng thật nếu đưa vào dùng — 3 k�
   low: 300
   base: 700
   high: 1000
-  source: "(ví dụ) track A — thay bằng số của nhóm. Cơ sở: lớp L3 hơn 700 học viên (README hackathon); thấp, cao: (tự ước tính)"
+  source: "https://www.facebook.com/share/p/19euXvkYzd/ - Fanpage Đào tạo Nhân tài AI thực chiến; thấp, cao: (tự ước tính)"
 
 personas:           # ≥3 kiểu người dùng; share cộng lại = 1
-  - name: dung_it
-    share: 0.5              # tỉ lệ người dùng kiểu này
-    uses_per_month: 4       # số phiên / người / tháng
-    turns_per_session: 1    # số lượt hỏi trong một phiên
-    source: "(ví dụ) phỏng vấn P1, P3 — thay bằng nguồn của nhóm"
-  - name: dung_vua
-    share: 0.3
-    uses_per_month: 10
-    turns_per_session: 3
-    source: "(ví dụ) khảo sát n = 24, câu 3"
-  - name: dung_nhieu
-    share: 0.2
-    uses_per_month: 20
-    turns_per_session: 5
-    source: "(ví dụ) data/preclass: đếm số lượt / người — cách đếm ở evidence/data-mining.md"
+  - name: chua_hieu_kien_thuc
+    share: 0.30              # tỉ lệ người dùng kiểu này
+    uses_per_month: 20       # số phiên / người / tháng
+    turns_per_session: 8    # số lượt hỏi trong một phiên
+    source: "Khảo sát qua Google Form. Số phiên và lượt hỏi tự ước lượng từ dữ liệu."
+  - name: khong_chac_yeu_cau_de
+    share: 0.35
+    uses_per_month: 16
+    turns_per_session: 6
+    source: "Khảo sát qua Google Form (gộp 'không chắc đề yêu cầu làm gì', 'không chắc kết quả đạt yêu cầu`, và 'sót yêu cầu sau mới biết'. Số phiên và lượt hỏi tự ước lượng từ dữ liệu."
+  - name: loi_ky_thuat
+    share: 0.35
+    uses_per_month: 12
+    turns_per_session: 4
+    source: "Khảo sát qua Google Form (gộp 'lỗi cài đặt cấu hình máy' và 'lỗi docker, deploy'). Số phiên và lượt hỏi tự ước lượng từ dữ liệu."
 # Mỗi lượt hỏi lấy ngẫu nhiên một đầu vào trong eval/benchmark.csv (type thuong và kho).
 # Persona hỏi kiểu riêng: thêm vào persona đó
 #     types: [thuong, kho, tu_choi]
@@ -38,14 +38,14 @@ personas:           # ≥3 kiểu người dùng; share cộng lại = 1
 #     inputs: ["câu hỏi kiểu 1", "câu hỏi kiểu 2"]
 
 prices:             # USD / 1 triệu token — chép từ further-reading/model-prices.md của repo đề. ≥2 mức model
-  - model: gemini-3.1-flash-lite
-    input: 0.25
-    output: 1.50
-    source: "(ví dụ) https://ai.google.dev/gemini-api/docs/pricing · xem 25/11/2026"
+  - model: gemini-3.8-flash
+    input: 0.75
+    output: 3.75
+    source: "https://ai.google.dev/gemini-api/docs/pricing · xem 28/11/2026 · giá áp dụng đến 31/12/2026 (từ 01/01/2027: 1.50 / 7.50)"
   - model: gemini-4-hydrogen
     input: 1.50
     output: 7.50
-    source: "(ví dụ) https://ai.google.dev/gemini-api/docs/pricing · xem 25/11/2026"
+    source: "https://ai.google.dev/gemini-api/docs/pricing · xem 28/11/2026"
 
 usd_to_vnd:         # tuỳ chọn: điền thì bản tóm tắt in thêm tiền Việt
   rate:

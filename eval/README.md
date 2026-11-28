@@ -1,6 +1,6 @@
 # Hồ sơ đánh giá — một trang
 
-> Cập nhật CP3 (mục 1–2 mở rộng bộ câu thử 12 → 25 câu; mục 3 metric và chuẩn "đạt" giữ nguyên bản đã chốt tại CP2 trước 19:30 ngày 27/11). Mục 5–6 sẽ điền sau khi chạy lượt 1 (CP3) và lượt 2 (CP4).
+> Cập nhật CP4 (đã điền đủ mục 1–6 sau lượt 1 và lượt 2; mục 3 metric và chuẩn "đạt" giữ nguyên 100% bản đã chốt tại CP2 trước 19:30 ngày 27/11).
 
 ## 1. Dataset → xử lý
 
@@ -56,15 +56,15 @@ Lệnh `python run.py eval` xuất `eval/run-N.csv` + `traces/run-N.jsonl` · nh
 
 ## 5. Đã chạy gì
 
-*(Điền ở CP3–CP4 sau khi nối model thật và chạy lượt 1, lượt 2.)*
-
 | Lượt | Run ID | Model | Cấu hình (prompt / công cụ / thay đổi) | Đạt / tổng | % | Đạt chuẩn? |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | `run-1@20261128-015107` | `ag/gemini-3.8-flash` (qua `API_BASE_URL` OpenAI-compatible) | Workflow cố định 5 bước (`read_lab`, `list_labs`), `SYSTEM` 2 bước + `_filter_valid_codes` + `_sanitize_free_text`, `temperature=0`, `stream=False` | 24/25 | 96% | Đạt (≥80%, `thuong` 7/8, `kho` 10/10, `tu_choi` 7/7, 0 bịa mã; trượt `B04` thiếu `LAB3-0.4`) |
-| 2 | *(chưa chạy)* | | | | | |
+| 2 | `run-2@20261128-115018` | `ag/gemini-3.8-flash` (qua `API_BASE_URL` OpenAI-compatible) | Cùng workflow & model; cập nhật `SYSTEM` v2 (mặc định bắt buộc chọn toàn bộ mục 0, chuẩn hoá mẫu câu `KHÔNG RÕ:`, cấm bọc ```` ```json ````, nhấn mạnh từ chối khi trộn vế hợp lệ/đóng vai) | 25/25 | 100% | Đạt (≥80%, `thuong` 8/8, `kho` 10/10, `tu_choi` 7/7, 0 bịa mã; khắc phục `B04`) |
 
 Lượt chạy lại vì lỗi kỹ thuật, lượt sau CP4: ghi thêm dòng, không sửa dòng cũ.
 
 ## 6. Lỗi chính
 
-*(Điền ở CP4, tóm 2–3 dòng từ [eval/report.md](./report.md) sau khi phân tích lỗi lượt 1 và chạy lượt 2.)*
+- **Nhóm lỗi lớn nhất lượt 1:** bỏ sót quy định chung mục 0 do model tự suy diễn loại trừ (`B04` thiếu `[LAB3-0.4]`, làm `thuong` còn `7/8`), kèm 5/22 phản hồi thô bọc ```` ```json ```` trong trace và diễn đạt `KHÔNG RÕ:` cụt ở `B06` / phình `3,154` `tokens_out` ở `B07`.
+- **Đã sửa:** cập nhật `SYSTEM` v2 trong [codebase/agent.py](../codebase/agent.py) → lượt 2 tăng từ `24/25 (96%)` lên `25/25 (100%)`, lỗi bọc ```` ```json ```` giảm `5/22 → 0/22`, `tokens_out` trung bình/lượt gọi giảm `29.6%` (`926.8 → 652.5`), 0 câu tệ đi về điểm `pass`.
+- **Còn lại:** độ trễ đuôi còn dao động cao (`B02` đạt `36.79s` ở lượt 2) và kết quả mới đo trên 3 đề mẫu `synthetic` đã chuẩn hoá mã; chi tiết tại [eval/report.md](./report.md).
