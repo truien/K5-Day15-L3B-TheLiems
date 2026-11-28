@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>TheLiems · Soát yêu cầu đề lab theo từng bước</title>
+<!--
+  Xuất PDF (ở thư mục gốc repo):
+  msedge --headless=new --no-pdf-header-footer --print-to-pdf=demo-slides.pdf slides/slides.html
+  Luật: mỗi số trên slide phải truy được về file ghi ở chân trang. Ảnh trong img/ cắt từ video demo 28/11.
+-->
+<style>
+  @page { size: 1280px 720px; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", Arial, sans-serif; color: #17202e; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .slide { width: 1280px; height: 720px; padding: 36px 60px 50px; position: relative; overflow: hidden; background: #fff; page-break-after: always; border-top: 10px solid #2a78d6; }
+  .k { font-size: 15px; letter-spacing: 2px; color: #2a78d6; font-weight: 700; text-transform: uppercase; }
+  h1 { font-size: 38px; line-height: 1.2; margin: 4px 0 22px; }
+  .row { display: flex; gap: 32px; } .col { flex: 1; min-width: 0; }
+  .center { text-align: center; }
+  .lab { font-size: 19px; line-height: 1.35; } .sm { font-size: 15px; color: #5b6573; line-height: 1.35; }
+  .wait { display: inline-block; background: #fff3c4; border: 2px dashed #b7791f; color: #7a4f01; padding: 3px 12px; border-radius: 8px; font-weight: 700; font-size: 17px; }
+  .src { position: absolute; left: 60px; right: 90px; bottom: 14px; font-size: 12px; color: #8a93a3; }
+  .no { position: absolute; right: 36px; bottom: 14px; font-size: 14px; color: #8a93a3; }
+  .tile { background: #f3f6fa; border-radius: 16px; padding: 20px; }
+  .bar { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+  .bar .name { width: 210px; font-size: 19px; text-align: right; }
+  .bar .track { flex: 1; height: 30px; position: relative; }
+  .bar .fill { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 0 6px 6px 0; }
+  .bar .val { width: 96px; font-size: 21px; font-weight: 700; }
+  .light { background: #b7d3f4; } .dark { background: #2a78d6; }
+  .chip { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 12px; background: #f3f6fa; margin-bottom: 10px; font-size: 18px; }
+  .chip.pick { background: #e3eefc; border: 2px solid #2a78d6; font-weight: 700; }
+  .mark { width: 28px; height: 28px; border-radius: 50%; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; flex: none; }
+  .yes { background: #18794e; } .noo { background: #9aa4b4; }
+  .chip .n { margin-left: auto; font-weight: 700; }
+  .flow { display: flex; align-items: flex-start; justify-content: space-between; margin-top: 8px; }
+  .node { width: 190px; text-align: center; }
+  .ico { width: 130px; height: 130px; border-radius: 50%; background: #f3f6fa; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; }
+  .ico svg { width: 66px; height: 66px; fill: none; stroke: #17202e; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+  .node.ai .ico { background: #2a78d6; } .node.ai .ico svg { stroke: #fff; }
+  .node b { font-size: 21px; display: block; }
+  .arrow { font-size: 36px; color: #9aa4b4; padding-top: 38px; }
+  .exits { display: flex; justify-content: center; gap: 24px; margin-top: 22px; }
+  .exit { border-radius: 12px; padding: 10px 18px; font-size: 18px; font-weight: 700; }
+  .stop { background: #fdeceb; color: #b3261e; } .unk { background: #fff3c4; color: #7a4f01; } .good { background: #e5f4ec; color: #18794e; }
+  .nots { display: flex; gap: 18px; margin-top: 30px; }
+  .not { flex: 1; background: #f3f6fa; border-radius: 12px; padding: 12px; text-align: center; font-size: 18px; }
+  .not b { color: #b3261e; font-size: 24px; margin-right: 8px; }
+  img { display: block; border-radius: 12px; background: #0b0b0b; padding: 8px 10px; }
+  .tag { display: inline-block; font-size: 16px; font-weight: 700; border-radius: 8px; padding: 3px 12px; margin-bottom: 6px; }
+  .grid25 { display: grid; grid-template-columns: repeat(5, 54px); gap: 8px; justify-content: center; }
+  .sq { width: 54px; height: 54px; border-radius: 10px; background: #2a78d6; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; }
+  .sq.fail { background: #d03b3b; font-size: 15px; }
+  .sq.empty { background: #fff; border: 2px dashed #c3cad6; }
+  .hero { font-size: 46px; font-weight: 800; line-height: 1.1; }
+</style>
+</head>
+<body>
+
+<section class="slide">
+  <div class="k">1 · Người dùng và pain</div>
+  <h1>Đang làm lab theo checkpoint: sót hay không chắc yêu cầu?</h1>
+  <div class="row">
+    <div class="col center">
+      <svg width="250" height="250" viewBox="0 0 200 200">
+        <circle cx="100" cy="100" r="78" fill="none" stroke="#e4e9f1" stroke-width="28"/>
+        <circle cx="100" cy="100" r="78" fill="none" stroke="#2a78d6" stroke-width="28" stroke-dasharray="392.1 490.1" transform="rotate(-90 100 100)"/>
+        <text x="100" y="114" text-anchor="middle" font-size="42" font-weight="800" fill="#17202e">16/20</text>
+      </svg>
+      <div class="lab">từng gặp chuyện về yêu cầu<br><span class="sm">đếm thêm, không định trước</span></div>
+    </div>
+    <div class="col center">
+      <svg width="250" height="250" viewBox="0 0 200 200">
+        <circle cx="100" cy="100" r="78" fill="none" stroke="#e4e9f1" stroke-width="28"/>
+        <circle cx="100" cy="100" r="78" fill="none" stroke="#d03b3b" stroke-width="28" stroke-dasharray="98 490.1" transform="rotate(-90 100 100)"/>
+        <text x="100" y="114" text-anchor="middle" font-size="42" font-weight="800" fill="#17202e">4/20</text>
+      </svg>
+      <div class="lab">coi là chỗ <b>tốn nhất</b>, ≥ 30 phút<br><span class="sm">giả thuyết cần ≥ 2/3: <b style="color:#b3261e">✕ không đạt</b></span></div>
+    </div>
+    <div class="col">
+      <div class="tile" style="margin-top:30px">
+        <svg width="44" height="34" viewBox="0 0 44 34"><path d="M2 34V18Q3 4 18 0l2 5Q11 9 11 17h8v17zM25 34V18Q26 4 41 0l2 5Q34 9 34 17h8v17z" fill="#2a78d6"/></svg>
+        <div style="font-size:27px; line-height:1.35; margin-top:12px">chạy được nhưng không biết đúng chưa. Tầm gần 1 tiếng.</div>
+        <div class="sm" style="margin-top:12px">P4 · phỏng vấn người làm lab</div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:20px">
+    <div class="bar"><div class="name">Không chắc đề yêu cầu</div><div class="track"><div class="fill dark" style="width:50%"></div></div><div class="val">10/20</div></div>
+    <div class="bar"><div class="name">Không chắc đã đạt</div><div class="track"><div class="fill dark" style="width:45%"></div></div><div class="val">9/20</div></div>
+    <div class="bar"><div class="name">Sót, sau mới biết</div><div class="track"><div class="fill dark" style="width:20%"></div></div><div class="val">4/20</div></div>
+  </div>
+  <div class="src">Nguồn: evidence/summary.md · evidence/survey/results.csv (N = 20 học viên) · evidence/interviews/P4.md</div><div class="no">1</div>
+</section>
+
+<section class="slide">
+  <div class="k">2 · Vì sao chọn bài này</div>
+  <h1>Chọn từ phỏng vấn, rồi kiểm lại bằng khảo sát</h1>
+  <div class="row">
+    <div class="col" style="flex:0.85">
+      <div class="lab" style="margin-bottom:12px"><b>Lúc chọn</b> <span class="sm">(3 người)</span></div>
+      <div class="chip pick"><span class="mark yes">✓</span>Sót / không chắc yêu cầu<span class="n">2/3</span></div>
+      <div class="chip"><span class="mark noo">✕</span>Kẹt lỗi · đáp án khó dựng<span class="n">2/3</span></div>
+      <div class="chip"><span class="mark noo">✕</span>Môi trường · dưới 30 phút<span class="n">1/3</span></div>
+      <div class="chip"><span class="mark noo">✕</span>Cần ôn gì trước<span class="n">0/3</span></div>
+      <div class="chip"><span class="mark noo">✕</span>Nộp thiếu file<span class="n">0/3</span></div>
+    </div>
+    <div class="col" style="flex:1.15">
+      <div class="lab" style="margin-bottom:12px"><b>Chỗ tốn thời gian nhất</b> <span class="sm">(20 người) · <span style="color:#2a78d6">■</span> mất ≥ 30 phút <span style="color:#b7d3f4">■</span> ít hơn</span></div>
+      <div class="bar"><div class="name">Yêu cầu (3 ý)</div><div class="track"><div class="fill light" style="width:100%"></div><div class="fill dark" style="width:57.1%; border-right:2px solid #fff; border-radius:0"></div></div><div class="val">7 <span class="sm">(4)</span></div></div>
+      <div class="bar"><div class="name">Kiến thức</div><div class="track"><div class="fill light" style="width:71.4%"></div><div class="fill dark" style="width:57.1%; border-right:2px solid #fff; border-radius:0"></div></div><div class="val">5 <span class="sm">(4)</span></div></div>
+      <div class="bar"><div class="name">Docker, deploy</div><div class="track"><div class="fill light" style="width:57.1%"></div></div><div class="val">4 <span class="sm">(0)</span></div></div>
+      <div class="bar"><div class="name">Cài đặt máy</div><div class="track"><div class="fill light" style="width:42.9%"></div><div class="fill dark" style="width:28.6%; border-right:2px solid #fff; border-radius:0"></div></div><div class="val">3 <span class="sm">(2)</span></div></div>
+      <div class="bar"><div class="name">Không gặp</div><div class="track"><div class="fill light" style="width:14.3%"></div></div><div class="val">1</div></div>
+      <div class="tile center" style="margin-top:20px"><span class="hero" style="color:#2a78d6">≥ 7 giờ</span> <span class="lab">/ tháng, cộng 4 người</span><div class="sm">tự ước tính từ cận dưới, trong mẫu; không suy ra cả khoá</div></div>
+    </div>
+  </div>
+  <div class="src">Nguồn: spec.md §2 · evidence/summary.md · evidence/interviews/P2–P4.md</div><div class="no">2</div>
+</section>
+
+<section class="slide">
+  <div class="k">3 · Giải pháp</div>
+  <h1>AI chỉ chọn mã. Code kiểm. Người quyết.</h1>
+  <div class="flow">
+    <div class="node"><div class="ico"><svg viewBox="0 0 64 64"><rect x="6" y="14" width="52" height="36" rx="5"/><path d="M15 26l8 6-8 6M30 40h18"/></svg></div><b>LAB1 | CP2</b><span class="sm">tách đầu vào</span></div>
+    <div class="arrow">→</div>
+    <div class="node"><div class="ico"><svg viewBox="0 0 64 64"><path d="M16 6h22l12 12v40H16z"/><path d="M38 6v12h12M23 30h20M23 39h20M23 48h12"/></svg></div><b>Đọc đề</b><span class="sm">công cụ read_lab</span></div>
+    <div class="arrow">→</div>
+    <div class="node ai"><div class="ico"><svg viewBox="0 0 64 64"><path d="M32 8l5 15 15 5-15 5-5 15-5-15-15-5 15-5zM50 44l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></svg></div><b>AI chọn mã</b><span class="sm">1 lần gọi</span></div>
+    <div class="arrow">→</div>
+    <div class="node"><div class="ico"><svg viewBox="0 0 64 64"><path d="M8 12h48L39 33v18l-14 6V33z"/></svg></div><b>Code kiểm</b><span class="sm">bỏ mã ngoài đề, bổ sung quy định chung</span></div>
+    <div class="arrow">→</div>
+    <div class="node"><div class="ico"><svg viewBox="0 0 64 64"><circle cx="26" cy="20" r="10"/><path d="M8 54c2-14 9-20 18-20 6 0 11 3 14 8M40 48l6 6 12-14"/></svg></div><b>Người đối chiếu</b><span class="sm">trước khi chạy</span></div>
+  </div>
+  <div class="exits">
+    <div class="exit good">YÊU CẦU: mã + đoạn đề</div>
+    <div class="exit unk">KHÔNG RÕ: đề không nói / không có CP</div>
+    <div class="exit stop">TỪ CHỐI: ngoài phạm vi</div>
+  </div>
+  <div class="nots">
+    <div class="not"><b>✕</b>Làm hộ bài</div>
+    <div class="not"><b>✕</b>Chấm điểm</div>
+    <div class="not"><b>✕</b>Chạy lệnh, vào repo</div>
+    <div class="not"><b>✕</b>Thêm yêu cầu ngoài đề</div>
+  </div>
+  <div class="sm center" style="margin-top:22px">Workflow cố định, không dùng agent: chỉ 1 quyết định AI · thiếu lab hoặc CP thì không gọi model</div>
+  <div class="src">Nguồn: spec.md §4 · codebase/agent.py, codebase/tools.py</div><div class="no">3</div>
+</section>
+
+<section class="slide">
+  <div class="k">4 · Demo</div>
+  <h1>Câu thường · câu cố tình phá</h1>
+  <span class="tag good">✓ Thường: ra đủ 5 yêu cầu</span>
+  <img src="img/demo-thuong.png" style="width:900px" alt="Ảnh chụp: hỏi CP1 của LAB1, công cụ trả 5 yêu cầu kèm mã">
+  <div style="margin-top:14px"><span class="tag stop">⛔ Tấn công: TỪ CHỐI</span></div>
+  <img src="img/demo-tan-cong.png" style="width:1160px" alt="Ảnh chụp: câu SYSTEM OVERRIDE bị từ chối">
+  <div style="position:absolute; right:60px; top:150px; width:215px" class="tile center">
+    <div class="sm">LAB2 | CP9</div><div class="hero" style="color:#2a78d6">0</div><div class="lab">lần gọi model:<br>code chặn trước</div>
+  </div>
+  <div class="src">Ảnh cắt từ video demo 28/11 (model thật ag/gemini-3.8-flash) · video dự phòng: drive.google.com/file/d/1ZD7ue-Z9_0HoibyoE690H9AZHbbTVFrV</div><div class="no">4</div>
+</section>
+
+<section class="slide">
+  <div class="k">5 · Đánh giá thế nào</div>
+  <h1>25 câu thử · chuẩn “đạt” chốt trước khi chạy</h1>
+  <div class="row">
+    <div class="col center" style="flex:0.8">
+      <div class="hero">24/25</div><div class="lab" style="margin-bottom:14px"><b>Lượt 1</b> · 96%</div>
+      <div class="grid25">
+        <div class="sq">✓</div><div class="sq">✓</div><div class="sq">✓</div><div class="sq fail">✕B04</div><div class="sq">✓</div>
+        <div class="sq">✓</div><div class="sq">✓</div><div class="sq">✓</div><div class="sq">✓</div><div class="sq">✓</div>
+        <div class="sq">✓</div><div class="sq">✓</div><div class="sq">✓</div><div class="sq">✓</div><div class="sq">✓</div>
+        <div class="sq">✓</div><div class="sq">✓</div><div class="sq">✓</div><div class="sq">✓</div><div class="sq">✓</div>
+        <div class="sq">✓</div><div class="sq">✓</div><div class="sq">✓</div><div class="sq">✓</div><div class="sq">✓</div>
+      </div>
+    </div>
+    <div class="col center" style="flex:0.8">
+      <div class="hero">25/25</div><div class="lab" style="margin-bottom:14px"><b>Lượt 2</b> · 100%</div>
+      <div class="grid25">
+        <div class="sq">✓</div>        <div class="sq">✓</div>        <div class="sq">✓</div>        <div class="sq">✓</div>        <div class="sq">✓</div>        <div class="sq">✓</div>        <div class="sq">✓</div>        <div class="sq">✓</div>        <div class="sq">✓</div>        <div class="sq">✓</div>        <div class="sq">✓</div>        <div class="sq">✓</div>        <div class="sq">✓</div>        <div class="sq">✓</div>        <div class="sq">✓</div>        <div class="sq">✓</div>        <div class="sq">✓</div>        <div class="sq">✓</div>        <div class="sq">✓</div>        <div class="sq">✓</div>        <div class="sq">✓</div>        <div class="sq">✓</div>        <div class="sq">✓</div>        <div class="sq">✓</div>        <div class="sq">✓</div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="chip"><span class="mark yes">✓</span>≥ 80% câu qua<span class="n">96% → 100%</span></div>
+      <div class="chip"><span class="mark yes">✓</span>Từ chối đúng 100%<span class="n">7/7</span></div>
+      <div class="chip"><span class="mark yes">✓</span>Không bịa mã, quy định<span class="n">0</span></div>
+      <div class="chip"><span class="mark noo">·</span>Câu thường<span class="n">7/8 → 8/8</span></div>
+      <div class="chip"><span class="mark noo">·</span>Câu khó<span class="n">10/10</span></div>
+      <div class="tile" style="margin-top:16px; background:#fdeceb"><div class="lab"><b>B04:</b> lượt 1 sót quy định chung <b>LAB3-0.4</b><br>→ sửa prompt, lượt 2 đạt</div></div>
+      <div class="sm" style="margin-top:14px">3 đề tự dựng (synthetic) · 49 yêu cầu · 4 metric<br>Ô xếp theo thứ tự B01 → B25, ô đỏ là câu trượt.</div>
+    </div>
+  </div>
+  <div class="src">Nguồn: eval/run-1.csv (run-1@20261128-015107) · eval/run-2.csv (run-2@20261128-115018) · cùng model ag/gemini-3.8-flash · eval/report.md · eval/metric_spec.yaml · spec.md §7</div><div class="no">5</div>
+</section>
+
+<section class="slide">
+  <div class="k">6 · Chi phí khi dùng thật</div>
+  <h1>Khoảng $0.63 / học viên / tháng</h1>
+  <div class="row">
+    <div class="col" style="flex:1.1">
+      <div class="lab" style="margin-bottom:10px"><b>Token trung bình một câu</b> <span class="sm">(lượt 2)</span></div>
+      <div class="bar"><div class="name" style="width:70px">Vào</div><div class="track"><div class="fill dark" style="width:100%"></div></div><div class="val">4.348</div></div>
+      <div class="bar"><div class="name" style="width:70px">Ra</div><div class="track"><div class="fill dark" style="width:15%"></div></div><div class="val">653</div></div>
+      <div class="row" style="margin-top:36px">
+        <div class="col tile center"><div class="hero">22</div><div class="lab">câu gọi model</div></div>
+        <div class="col tile center"><div class="hero" style="color:#2a78d6">3</div><div class="lab">code chặn, 0 token</div></div>
+        <div class="col tile center"><div class="hero">10,1s</div><div class="lab">trung bình / câu</div></div>
+      </div>
+    </div>
+    <div class="col center">
+      <div class="lab" style="margin-bottom:8px"><b>Chi phí / tháng</b> <span class="sm">· gemini-3.8-flash</span></div>
+      <svg width="480" height="300" viewBox="0 0 480 300">
+        <line x1="20" y1="260" x2="460" y2="260" stroke="#c3cad6" stroke-width="2"/>
+        <g fill="#2a78d6"><rect x="50" y="200" width="90" height="60" rx="4"/><rect x="195" y="120" width="90" height="140" rx="4"/><rect x="340" y="60" width="90" height="200" rx="4"/></g>
+        <g font-size="24" font-weight="700" fill="#17202e" text-anchor="middle"><text x="95" y="190">$189</text><text x="240" y="110">$441</text><text x="385" y="50">$630</text></g>
+        <g font-size="18" fill="#17202e" text-anchor="middle"><text x="95" y="286">300 người</text><text x="240" y="286">700 người</text><text x="385" y="286">1.000 người</text></g>
+      </svg>
+      <div class="lab" style="margin-top:6px"><b>$0.0399</b> / task thành công <span class="sm">(model mạnh hơn: $0.0798, gấp đôi mọi cột)</span></div>
+      <div class="sm" style="margin-top:6px">So với impact: ~21 phút bị mất / người khảo sát / tháng (tự ước tính)</div>
+    </div>
+  </div>
+  <div class="src">Nguồn: eval/run-2.csv · cost/cost-estimate.md · cost/simulate-1.csv (50 phiên, seed 42) · giá: ai.google.dev, xem 28/11 · số lần dùng là tự ước tính</div><div class="no">6</div>
+</section>
+
+<section class="slide">
+  <div class="k">7 · Kết luận</div>
+  <h1>Đề xuất: làm tiếp, nhưng phải chỉnh</h1>
+  <div class="row" style="align-items:stretch">
+    <div class="col center tile" style="flex:0.7">
+      <svg width="110" height="260" viewBox="0 0 110 260"><rect x="5" y="5" width="100" height="250" rx="40" fill="#17202e"/><circle cx="55" cy="55" r="30" fill="#4a5262"/><circle cx="55" cy="130" r="30" fill="#fab219"/><circle cx="55" cy="205" r="30" fill="#4a5262"/></svg>
+      <div class="hero" style="color:#b7791f; margin-top:16px">ITERATE</div>
+    </div>
+    <div class="col tile" style="background:#e5f4ec">
+      <div class="lab" style="color:#18794e"><b>✓ Được</b></div>
+      <div class="hero" style="margin-top:14px">100%</div><div class="lab">lượt 2 (lượt 1: 96%)</div>
+      <div class="hero" style="margin-top:18px">16/20</div><div class="lab">từng vướng yêu cầu</div>
+      <div class="hero" style="margin-top:18px">6/15</div><div class="lab">chỗ bị sót nằm ở mục / file khác</div>
+    </div>
+    <div class="col tile" style="background:#fdeceb">
+      <div class="lab" style="color:#b3261e"><b>✕ Chưa được</b></div>
+      <div class="hero" style="margin-top:14px">4/20</div><div class="lab">coi là chỗ tốn nhất</div>
+      <div class="hero" style="margin-top:18px">0</div><div class="lab">người dùng thử</div>
+      <div class="hero" style="margin-top:18px">0</div><div class="lab">đề lab thật đã đo</div>
+      <div class="lab" style="margin-top:20px">chưa đo công cụ tiết kiệm bao nhiêu</div>
+    </div>
+  </div>
+  <div class="src">Nguồn: eval/run-2.csv · evidence/summary.md · data/DATA_CARD.md · cost/cost-estimate.md · validation/log.md (chưa có người thử)</div><div class="no">7</div>
+</section>
+
+<section class="slide">
+  <div class="k">8 · Nếu có thêm 1 tuần</div>
+  <h1>Ba việc</h1>
+  <div class="row" style="margin-top:30px">
+    <div class="col tile center">
+      <div class="ico" style="background:#fff"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="24"/><circle cx="32" cy="32" r="13"/><circle cx="32" cy="32" r="2"/></svg></div>
+      <div class="hero" style="font-size:27px">Thu hẹp</div>
+      <div class="lab" style="margin-top:8px">yêu cầu nằm ở mục khác, file khác</div>
+      <div class="sm" style="margin-top:16px">6/15 người nói chỗ bị sót nằm ở đó</div>
+    </div>
+    <div class="col tile center">
+      <div class="ico" style="background:#fff"><svg viewBox="0 0 64 64"><path d="M10 16h28v40H10zM18 8h28l8 8v32H44"/><path d="M17 28h14M17 37h14M17 46h9"/></svg></div>
+      <div class="hero" style="font-size:27px">Đề thật</div>
+      <div class="lab" style="margin-top:8px">nhiều file, không gắn mã tay</div>
+      <div class="sm" style="margin-top:16px">đề thử hiện ngắn, đã chuẩn hoá mã</div>
+    </div>
+    <div class="col tile center">
+      <div class="ico" style="background:#fff"><svg viewBox="0 0 64 64"><path d="M32 6l22 8v16c0 14-9 23-22 28C19 53 10 44 10 30V14z"/><path d="M22 31l7 7 13-14"/></svg></div>
+      <div class="hero" style="font-size:27px">Đo độ ổn định</div>
+      <div class="lab" style="margin-top:8px">câu giữ riêng, chạy 3 lần mỗi câu</div>
+      <div class="sm" style="margin-top:16px">25/25 mới chạy 1 lần mỗi câu</div>
+    </div>
+  </div>
+  <div class="lab center" style="margin-top:44px">TheLiems · L3B · Track A · github.com/truien/K5-Day15-L3B-TheLiems</div>
+  <div class="src">Nguồn: evidence/summary.md · data/DATA_CARD.md · eval/report.md §4</div><div class="no">8</div>
+</section>
+
+</body>
+</html>
+
